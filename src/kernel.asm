@@ -7,6 +7,7 @@
 
 global start
 
+extern screen_inicializar
 extern GDT_DESC
 
 ;; Saltear seccion de datos
@@ -64,7 +65,7 @@ start:
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
     ; Limpiar la pantallita wiiii :P
-    
+    CALL screen_inicializar
 
     ; Ejercicio 2
     ; Inicializar el juego
