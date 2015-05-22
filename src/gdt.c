@@ -37,11 +37,11 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x0A,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x00,           /* dpl          */
-        (unsigned char)     0x00,           /* p            */
+        (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x01,           /* db           */
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
@@ -54,11 +54,11 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x02,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x00,           /* dpl          */
-        (unsigned char)     0x00,           /* p            */
+        (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x01,           /* db           */
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
@@ -71,11 +71,11 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x0A,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x03,           /* dpl          */
-        (unsigned char)     0x00,           /* p            */
+        (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x01,           /* db           */
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
@@ -88,11 +88,11 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x02,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x03,           /* dpl          */
-        (unsigned char)     0x00,           /* p            */
+        (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x01,           /* db           */
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },

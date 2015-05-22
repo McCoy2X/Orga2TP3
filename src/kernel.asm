@@ -51,18 +51,20 @@ start:
     or eax, 1
     mov cr0, eax
     ; Saltar a modo protegido
-    jmp 0x08:modoprotegido
+    jmp 0x40:modoprotegido
     BITS 32
     modoprotegido:
     ; Establecer selectores de segmentos
-    MOV AX, 0x48
+    MOV AX, 0x48    
     MOV DS, AX
     MOV AX, 0x48
     MOV SS, AX
     ; Establecer la base de la pila
     MOV EBP, 0x27000
     ; Imprimir mensaje de bienvenida
-    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
+    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
+    ; Limpiar la pantallita wiiii :P
+    
 
     ; Ejercicio 2
     ; Inicializar el juego
