@@ -12,8 +12,7 @@
 #define VIDEO_FILS 50
 #define VIDEO_COLS 80
 
-#define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
-
+#define VIDEO      0x000B8000 /* direccion fisica del buffer de video */
 
 #include "colors.h"
 #include "defines.h"
@@ -23,7 +22,6 @@ typedef struct ca_s {
     unsigned char a;
 } ca;
 
-
 struct pirata_t;
 typedef struct pirata_t pirata_t;
 
@@ -31,7 +29,6 @@ struct jugador_t;
 typedef struct jugador_t jugador_t;
 
 int ee_printf(const char *fmt, ...);
-
 
 void screen_pintar(unsigned char c, unsigned char color, uint fila, uint columna);
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
@@ -54,6 +51,5 @@ void screen_pintar_relojes();
 
 void screen_actualizar_posicion_mapa(uint x, uint y);
 void screen_stop_game_show_winner(jugador_t *j);
-
 
 #endif  /* !__SCREEN_H__ */
