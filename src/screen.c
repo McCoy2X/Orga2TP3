@@ -82,19 +82,34 @@ void print_dec(uint numero, int size, uint x, uint y, unsigned short attr) {
     }
 }
 
+void print_group() {
+    print("A_Nightmare_on_Elm_Street_/_Family_Game", 0, 0, C_FG_DARK_GREY | C_BG_LIGHT_GREY);
+}
+
 void screen_inicializar() {
+    screen_pintar_rect(0, C_BG_LIGHT_GREY, 0, 0, 50, 80);
+}
+
+void screen_pintar_rect(unsigned char c, unsigned char color, int fila, int columna, int alto, int ancho) {
     int i;
     int j;
-    for(i = 0; i < VIDEO_COLS; i++) {
-        for(j = 0; j < VIDEO_FILS; j++) {
-            screen_pintar(0, C_BG_LIGHT_GREY, j, i);
+    for(i = fila; i < fila + ancho; i++) {
+        for(j = columna; j < columna + alto; j++) {
+            screen_pintar(c, color, j, i);
         }
     }
-    for(i = 0; i < VIDEO_COLS; i++) {
-        for(j = 45; j < VIDEO_FILS; j++) {
-            if(i > 30 && i < 40) { screen_pintar(0, C_BG_RED, j, i); }
-            else if(i > 40 && i < 50) { screen_pintar(0, C_BG_BLUE, j, i); }
-            else { screen_pintar(0, C_BG_BLACK, j, i); }
-        }
-    }
+}
+
+void screen_pintar_linea_h(unsigned char c, unsigned char color, int fila, int columna, int ancho) {
+
+}
+
+void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int columna, int alto) {
+
+}
+
+void screen_pintar_puntajes() {
+    screen_pintar_rect(0, C_BG_BLACK, 0, 45, 5, 80);
+    screen_pintar_rect(0, C_BG_RED, 33, 45, 5, 7);
+    screen_pintar_rect(0, C_BG_BLUE, 40, 45, 5, 7);
 }

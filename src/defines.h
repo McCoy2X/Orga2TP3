@@ -23,7 +23,11 @@ typedef unsigned int   uint;
 /* Constantes basicas */
 /* -------------------------------------------------------------------------- */
 #define PAGE_SIZE               0x00001000
+#define DIR_PAGINAS_KERNEL  	0x027000
 #define TASK_SIZE               4096
+
+#define MEM_MANAGER				0x00100000
+#define MAPA 					0x00500000
 
 #define BOOTSECTOR              0x00001000 /* direccion fisica de comienzo del bootsector (copiado) */
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
@@ -31,14 +35,14 @@ typedef unsigned int   uint;
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 30
+#define GDT_COUNT 				30
 
-#define GDT_IDX_NULL_DESC           0
-#define GDT_NIVEL0_CODIGO           8
-#define GDT_NIVEL0_DATOS            9
-#define GDT_NIVEL3_CODIGO           10
-#define GDT_NIVEL3_DATOS            11
-#define GDT_PANTALLA            	12
+#define GDT_IDX_NULL_DESC       0
+#define GDT_NIVEL0_CODIGO       8
+#define GDT_NIVEL0_DATOS    	9
+#define GDT_NIVEL3_CODIGO       10
+#define GDT_NIVEL3_DATOS        11
+#define GDT_PANTALLA            12
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
