@@ -16,7 +16,11 @@ extern fin_intr_pic1
 
 ;; Sched
 extern sched_tick
-extern sched_tarea_actual
+extern sched_tarea_actualsched_tarea_actual
+
+;; Screen
+extern screen_actualizar_reloj_global
+extern print
 
 
 ;;
@@ -68,9 +72,48 @@ ISR 19
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 
+global _isr32
+_isr32:
+	; GUARDO REGISTROS ANTES DE LLAMAR A LA FUNCION DE C
+	pushad
+
+	call fin_intr_pic1
+	call screen_actualizar_reloj_global
+	
+	popad
+	iret
+
+
+
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+
+global _isr33
+_isr33:
+	pushad
+
+	call fin_intr_pic1
+
+	mov ebx, esp
+	sub ebx, 4
+	xor eax, eax
+	in al, 0x60
+	push eax
+	
+	mov ecx, 0x000F000F
+	push ecx
+	mov ecx, 10
+	push ecx
+	mov ecx, 10
+	push ecx
+	push ebx
+	
+	call print
+
+	add esp, 20
+	popad	
+	iret
 
 ;;
 ;; Rutinas de atención de las SYSCALLS

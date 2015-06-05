@@ -16,6 +16,9 @@ extern mmu_inicializar
 extern mmu_inicializar_dir_pirata
 extern mmu_inicializar_dir_kernel
 
+extern resetear_pic
+extern habilitar_pic
+
 extern GDT_DESC
 extern IDT_DESC
 
@@ -108,7 +111,7 @@ start:
     PUSH 0x100000   ;codigo
     MOV  EAX, CR3
     PUSH EAX        ;cr3
-    xchg bx, bx
+    ;xchg bx, bx
     CALL mmu_inicializar_dir_pirata
 
     ; Inicializar tss
@@ -124,6 +127,9 @@ start:
     lidt [IDT_DESC]
 
     ; Configurar controlador de interrupciones
+    call resetear_pic
+    call habilitar_pic
+    sti
 
     ; Cargar tarea inicial
 
