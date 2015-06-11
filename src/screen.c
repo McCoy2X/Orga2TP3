@@ -83,7 +83,7 @@ void print_dec(uint numero, int size, uint x, uint y, unsigned short attr) {
 }
 
 void print_group() {
-    print("A_Nightmare_on_Elm_Street_/_Family_Game", 0, 0, C_FG_DARK_GREY | C_BG_LIGHT_GREY);
+    print("A_Nightmare_on_Elm_Street_/_Family_Game", 80 - 39, 0, C_FG_DARK_GREY | C_BG_LIGHT_GREY);
 }
 
 void screen_inicializar() {

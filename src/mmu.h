@@ -19,4 +19,6 @@
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
 
+int* mmu_get_pagina();
+
 #endif	/* !__MMU_H__ */

@@ -19,6 +19,9 @@ extern mmu_inicializar_dir_kernel
 extern resetear_pic
 extern habilitar_pic
 
+extern tss_inicializar
+extern tss_crear_idle
+
 extern GDT_DESC
 extern IDT_DESC
 
@@ -77,10 +80,7 @@ start:
     MOV ESP, EBP
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
-    ; Limpiar la pantallita wiiii :P
-    ;CALL screen_inicializar
 
-    ; Ejercicio 2
     ; Inicializar el juego
 
     ; Inicializar pantalla
@@ -107,18 +107,20 @@ start:
     CALL print_group
 
     CALL mmu_inicializar
-    PUSH 0x200000   ;posMapa
-    PUSH 0x100000   ;codigo
     MOV  EAX, CR3
     PUSH EAX        ;cr3
-    ;xchg bx, bx
+    PUSH 0x100000   ;codigo
+    PUSH 0x200000   ;posMapa
     CALL mmu_inicializar_dir_pirata
 
     ; Inicializar tss
+    CALL tss_inicializar
 
     ; Inicializar tss de la tarea Idle
+    CALL tss_crear_idle
 
     ; Inicializar el scheduler
+
     
     ; Inicializar la IDT
     call idt_inicializar
