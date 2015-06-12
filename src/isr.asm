@@ -119,4 +119,13 @@ _isr33:
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 
+global _isr70
+_isr70:
+	pushad
 
+	call fin_intr_pic1
+
+	mov eax, 0x42
+
+	popad
+	iret
