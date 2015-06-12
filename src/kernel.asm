@@ -112,12 +112,28 @@ start:
     PUSH 0x100000   ;codigo
     PUSH 0x200000   ;posMapa
     CALL mmu_inicializar_dir_pirata
+    SUB  ESP, 12
 
     ; Inicializar tss
     CALL tss_inicializar
 
     ; Inicializar tss de la tarea Idle
+    PUSH GS
+    PUSH FS
+    PUSH DS
+    PUSH SS
+    PUSH CS
+    PUSH ES
+    PUSH EBP
+    PUSH ESP
+    PUSHF
+    MOV EAX, CR3
+    PUSH EAX
     CALL tss_crear_idle
+    MOV AX, 0x68
+    LTR AX
+    JMP 0x70:0
+    SUB ESP, 40
 
     ; Inicializar el scheduler
 

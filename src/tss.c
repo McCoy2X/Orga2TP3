@@ -16,17 +16,17 @@ tss tss_jugadorB[MAX_CANT_PIRATAS_VIVOS];
 
 void tss_inicializar() {
 	tss* tss_inicial_pos = &(tss_inicial);
-	tss* tss_idle_pos = &tss_idle;
+	tss* tss_idle_pos = &(tss_idle);
 
 	/* TSS Inicial */
     /* Offset = */
     gdt[TSS_INICIAL] = (gdt_entry) {
-        (unsigned short)    0x0068,         /* limit[0:15]  */
+        (unsigned short)    0x0067,         /* limit[0:15]  */
         (unsigned short)    (int)tss_inicial_pos,/* base[0:15]   */
         (unsigned char)     (int)tss_inicial_pos >> 16,	/* base[23:16]  */
-        (unsigned char)     0x02,           /* type         */
-        (unsigned char)     0x01,           /* s            */
-        (unsigned char)     0x03,           /* dpl          */
+        (unsigned char)     0x09,           /* type         */
+        (unsigned char)     0x00,           /* s            */
+        (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x00,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
@@ -39,12 +39,12 @@ void tss_inicializar() {
     /* TSS Idle */
     /* Offset = */
     gdt[TSS_IDLE] = (gdt_entry) {
-        (unsigned short)    0x0068,         /* limit[0:15]  */
+        (unsigned short)    0x0067,         /* limit[0:15]  */
         (unsigned short)    (int)tss_idle_pos,   /* base[0:15]   */
         (unsigned char)     (int)tss_idle_pos >> 16, 	/* base[23:16]  */
-        (unsigned char)     0x02,           /* type         */
-        (unsigned char)     0x01,           /* s            */
-        (unsigned char)     0x03,           /* dpl          */
+        (unsigned char)     0x09,           /* type         */
+        (unsigned char)     0x00,           /* s            */
+        (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x00,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
@@ -57,9 +57,9 @@ void tss_inicializar() {
 }
 
 /*Crear tss idle*/
-void tss_crear_idle(int cr3, int eip, int eflags, int esp, int ebp,
+void tss_crear_idle(int cr3, int eflags, int esp, int ebp,
 	short es, short cs, short ss, short ds, short fs, short gs) {	
-	tss_inicial = (tss) {
+	tss_idle = (tss) {
 	    (unsigned short)	0x0000,		/*ptl;*/
 	    (unsigned short)	0x0000,		/*unused0;*/
 	    (unsigned int)  	esp,		/*esp0;*/
@@ -72,7 +72,7 @@ void tss_crear_idle(int cr3, int eip, int eflags, int esp, int ebp,
 	    (unsigned short)  	0x0000,		/*ss2;*/
 	    (unsigned short)  	0x0000,		/*unused3;*/
 	    (unsigned int)    	cr3,		/*cr3;*/
-	    (unsigned int)    	eip,		/*eip;*/
+	    (unsigned int)    	0x00016000,	/*eip;*/
 	    (unsigned int)    	eflags,		/*eflags;*/
 	    (unsigned int)    	0x00000000,	/*eax;*/
 	    (unsigned int)    	0x00000000,	/*ecx;*/
@@ -94,10 +94,10 @@ void tss_crear_idle(int cr3, int eip, int eflags, int esp, int ebp,
 	    (unsigned short)  	0x0000,		/*unused8;*/
 	    (unsigned short)  	gs,			/*gs;*/
 	    (unsigned short)  	0x0000,		/*unused9;*/
-	    (unsigned short)  	0xFFFF,		/*ldt;*/
+	    (unsigned short)  	0x0000,		/*ldt;*/
 	    (unsigned short)  	0x0000,		/*unused10;*/
 	    (unsigned short)  	0x0000,		/*dtrap;*/
-	    (unsigned short)  	0x0000,		/*iomap;*/
+	    (unsigned short)  	0xFFFF,		/*iomap;*/
     };
 }
 
