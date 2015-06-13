@@ -8,11 +8,13 @@
 global start
 
 extern screen_inicializar
+extern screen_refrescar
 extern screen_pintar_puntajes
 extern idt_inicializar
 extern print_group
 
 extern mmu_inicializar
+extern DIR_PAGINAS_KERNEL
 extern mmu_inicializar_dir_pirata
 extern mmu_inicializar_dir_kernel
 
@@ -87,6 +89,8 @@ start:
     CALL screen_inicializar
     CALL screen_pintar_puntajes
 
+    CALL screen_refrescar
+
     ; Inicializar el manejador de memoria
 
 
@@ -96,8 +100,8 @@ start:
     ; Cargar directorio de paginas
 
     ; Habilitar paginacion
-    MOV EAX, 0x27000
-    mov CR3, EAX
+    MOV EAX, DIR_PAGINAS_KERNEL
+    MOV CR3, EAX
 
     MOV EAX, CR0
     OR  EAX, 0x80000000
@@ -130,10 +134,11 @@ start:
     MOV EAX, CR3
     PUSH EAX
     CALL tss_crear_idle
+    SUB ESP, 40
+    XOR EAX, EAX
     MOV AX, 0x68
     LTR AX
     JMP 0x70:0
-    SUB ESP, 40
 
     ; Inicializar el scheduler
 

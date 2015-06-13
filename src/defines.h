@@ -48,22 +48,6 @@ typedef unsigned int   uint;
 
 #define TSS_INICIAL             13
 #define TSS_IDLE                14
-#define TSS_PIRATAA1            15
-#define TSS_PIRATAA2            16
-#define TSS_PIRATAA3            17
-#define TSS_PIRATAA4            18
-#define TSS_PIRATAA5            19
-#define TSS_PIRATAA6            20
-#define TSS_PIRATAA7            21
-#define TSS_PIRATAA8            22
-#define TSS_PIRATAB1            23
-#define TSS_PIRATAB2            24
-#define TSS_PIRATAB3            25
-#define TSS_PIRATAB4            26
-#define TSS_PIRATAB5            27
-#define TSS_PIRATAB6            28
-#define TSS_PIRATAB7            29
-#define TSS_PIRATAB8            30
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */

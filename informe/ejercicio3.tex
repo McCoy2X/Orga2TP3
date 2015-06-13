@@ -1,0 +1,15 @@
+\section{Ejercicio 3}
+
+Para resolver este ejercicio se modicara screen.c, screen.h, mmu.c, mmu.h, kernel.asm y defines.h.
+
+(a)
+Para comenzar vamos a modificar screen.c y screen.h, creamos la funcion en C screen_refrescar que se enrgara de limpiar la pantalla y dibujar el fondo screen_inicializar y escribir la informacion del sistema (Los datos de ambos jugadores, los puntajes, y los graficos de reloj de idle y del sistema) usando print.
+
+(b)
+Definimos DIR_PAGINAS_KERNEL como 0x27000 en defines.h, luego vamos a mmu.h y creamos mmu_inicializar_dir_kernel, esta funcion crea en la posicion de memoria de DIR_PAGINAS_KERNEL el directorio de tablas de paginas y en la siguiente pagina (0x28000) la primera tabla de paginas que posee las paginas de 0x0 a 0x3FFFFF con identity mapping.
+
+(c)
+Vamos a kernel.asm y llamamos el extern mmu_inicializar_dir_kernel para crear el directorio de tablas y las tablas. Luego muevo a CR3 la posicion del directorio de tablas de paginas (DIR_PAGINAS_KERNEL). Luego para activar paginacion seteamos el bit PG (Paging) de CR0.
+
+(d)
+Para terminar en screen.c/h creamos la funcion print_group que usa print para escribir el nombre del grupo (Alineado a la derecha) y la llamamos desde kernel.asm, con esto podemos confirmar que la pagina esta funcionando.

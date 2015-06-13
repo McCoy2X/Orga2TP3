@@ -1,0 +1,25 @@
+\section{Ejercicio 1}
+
+Para la resolucion de este ejercicio modificamos kernel.asm, gdt.c, gdt.h, defines.h y screen.c
+
+(a)
+Comenzamos desde C creando los defines de las tablas de descriptores en defines.h, como los primeros 8 indices se consideran utilizadas vamos a enumerar nustros descriptores desde 8 (Como indica el subindice a), creando los siguientes defines.
+GDT_NIVEL0_CODIGO	8
+GDT_NIVEL0_DATOS	9
+GDT_NIVEL3_CODIGO   10
+GDT_NIVEL3_DATOS    11
+
+Luego en el archivo gdt.c agregamos al array de gdt los 4 descriptores, con su respectivo nivel (0 para los descriptores del kernel y 3 para los de usuario) y tipo, con su base en el principio de la memoria y su limite en 500MB (Setiando granularity y el valor de limite), setiando el bit de presente y 32 bits con d/b y no de sistema.
+
+(b)
+Para el siguiente subindice (b) pasamos a kernel.asm donde habilitamos A20 (utilizando la funcion brindada por la catedra) y luego cargamos la gdt usando LGDT y el puntero al descriptor de gdt GDT_DESC (Estructura brindada por la catedra y definida en gdt.h y iniciada en gdt.c). A continuacion activamos el bit PE (Protected Mode Enable) en CR0 moviendo y hacemos el salto al descriptor de nivel 0 de codigo en la gdt usando un JMP FAR.
+
+Ahora setiamos los selectores de segmento de datos y de stack, y finalizamos setiando la base(EBP) y el final de la pila(ESP) en 0x27000.
+
+(c)
+Para este punto volvemos a defines.h y definimos un quinto indice para el descriptor de la memoria de la pantalla.
+GDT_PANTALLA	12
+Y luego en gdt.c agregamos al array el descriptor que comienza en 0xB8000 (Memoria de video) con un limite de 32KB, de nivel 0, sin granularidad y el resto de los bits igual que los descriptores anteriores.
+
+(d)
+Para este punto vamos a screen.c y completamos las funciones auxiliares screen_inicializar (Limpia la pantalla y escribe los puntajes), screen_pintar_rect (Pinta un rectangulo en la pantalla con un color), screen_pintar_puntajes (Pinta los puntajes).

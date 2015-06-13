@@ -38,6 +38,7 @@ void screen_pintar_rect(unsigned char c, unsigned char color, int fila, int colu
 void screen_pintar_linea_h(unsigned char c, unsigned char color, int fila, int columna, int ancho);
 void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int columna, int alto);
 void screen_inicializar();
+void screen_refrescar();
 void screen_pintar_puntajes();
 
 void screen_actualizar_reloj_global();
