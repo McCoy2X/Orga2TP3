@@ -10,5 +10,4 @@
 
 #include "game.h"
 
-
 #endif	/* !__SCHED_H__ */

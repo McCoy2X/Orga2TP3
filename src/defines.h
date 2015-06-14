@@ -37,7 +37,7 @@ typedef unsigned int   uint;
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 				30
+#define GDT_COUNT 				31
 
 #define GDT_IDX_NULL_DESC       0
 #define GDT_NIVEL0_CODIGO       8
@@ -48,6 +48,43 @@ typedef unsigned int   uint;
 
 #define TSS_INICIAL             13
 #define TSS_IDLE                14
+
+#define TSS_JUGADORA_1          15
+#define TSS_JUGADORA_2          16
+#define TSS_JUGADORA_3          17
+#define TSS_JUGADORA_4          18
+#define TSS_JUGADORA_5          19
+#define TSS_JUGADORA_6          20
+#define TSS_JUGADORA_7          21
+#define TSS_JUGADORA_8          22
+
+#define TSS_JUGADORB_1          23
+#define TSS_JUGADORB_2          24
+#define TSS_JUGADORB_3          25
+#define TSS_JUGADORB_4          26
+#define TSS_JUGADORB_5          27
+#define TSS_JUGADORB_6          28
+#define TSS_JUGADORB_7          29
+#define TSS_JUGADORB_8          30
+
+/* Valores CR3 para las tareas */
+/* -------------------------------------------------------------------------- */
+#define CR3_JUGADORA_1           0x00100100
+#define CR3_JUGADORA_2           0x00100104
+#define CR3_JUGADORA_3           0x00100108
+#define CR3_JUGADORA_4           0x00100112
+#define CR3_JUGADORA_5           0x00100116
+#define CR3_JUGADORA_6           0x00100120
+#define CR3_JUGADORA_7           0x00100124
+#define CR3_JUGADORA_8           0x00100128
+#define CR3_JUGADORB_1           0x00100132
+#define CR3_JUGADORB_2           0x00100136
+#define CR3_JUGADORB_3           0x00100140
+#define CR3_JUGADORB_4           0x00100144
+#define CR3_JUGADORB_5           0x00100148
+#define CR3_JUGADORB_6           0x00100152
+#define CR3_JUGADORB_7           0x00100156
+#define CR3_JUGADORB_8           0x00100160
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */

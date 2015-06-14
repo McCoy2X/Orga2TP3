@@ -7,4 +7,3 @@ definicion de funciones del scheduler
 
 #include "sched.h"
 #include "i386.h"
-

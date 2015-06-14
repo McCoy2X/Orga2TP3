@@ -54,6 +54,11 @@ typedef struct str_tss {
     unsigned short  iomap;
 } __attribute__((__packed__, aligned (8))) tss;
 
+extern tss tss_init;
+extern tss tss_idle;
+extern tss tss_jugadorA[];
+extern tss tss_jugadorB[];
+
 void tss_inicializar();
 
 #endif  /* !__TSS_H__ */

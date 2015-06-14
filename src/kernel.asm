@@ -26,6 +26,8 @@ extern tss_crear_idle
 extern GDT_DESC
 extern IDT_DESC
 
+extern BASE_TSS
+
 ;; Saltear seccion de datos
 jmp start
 
@@ -134,26 +136,23 @@ start:
     ; PUSH EAX
     ; CALL tss_crear_idle
     ; SUB ESP, 40
-    mov edi,0x00005420
-    ;add edi,104
-    mov eax,cr3
-    mov [edi+28],eax
-    mov dword [edi+32],0x16000
-    mov dword [edi+36],0x46
-    mov dword [edi+56],0x27000
-    mov dword [edi+60],0x27000
-    mov word [edi+72],0x48
-    mov word [edi+76],0x40
-    mov word [edi+80],0x48
-    mov word [edi+84],0x48
-    mov word [edi+88],0x48
-    mov word [edi+92],0x48
-    mov word [edi+102],0xFFFF
     
-    XOR EAX, EAX
-    MOV AX, 0x68
-    LTR AX
-    JMP 0x70:0
+    ; ;mov edi, BASE_TSS
+    ; mov edi, 0x5420
+    ; ;add edi,104
+    ; mov eax,cr3
+    ; mov [edi+28],eax
+    ; mov dword [edi+32],0x16000
+    ; mov dword [edi+36],0x46
+    ; mov dword [edi+56],0x27000
+    ; mov dword [edi+60],0x27000
+    ; mov word [edi+72],0x48
+    ; mov word [edi+76],0x40
+    ; mov word [edi+80],0x48
+    ; mov word [edi+84],0x48
+    ; mov word [edi+88],0x48
+    ; mov word [edi+92],0x48
+    ; mov word [edi+102],0xFFFF
 
     ; Inicializar el scheduler
 
@@ -174,6 +173,10 @@ start:
     ; Habilitar interrupciones
 
     ; Saltar a la primera tarea: Idle
+    XOR EAX, EAX
+    MOV AX, 0x68
+    LTR AX
+    JMP 0x70:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
