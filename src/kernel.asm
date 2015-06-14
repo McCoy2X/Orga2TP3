@@ -14,7 +14,6 @@ extern idt_inicializar
 extern print_group
 
 extern mmu_inicializar
-extern DIR_PAGINAS_KERNEL
 extern mmu_inicializar_dir_pirata
 extern mmu_inicializar_dir_kernel
 
@@ -100,7 +99,7 @@ start:
     ; Cargar directorio de paginas
 
     ; Habilitar paginacion
-    MOV EAX, DIR_PAGINAS_KERNEL
+    MOV EAX, 0x27000
     MOV CR3, EAX
 
     MOV EAX, CR0
@@ -122,19 +121,35 @@ start:
     CALL tss_inicializar
 
     ; Inicializar tss de la tarea Idle
-    PUSH GS
-    PUSH FS
-    PUSH DS
-    PUSH SS
-    PUSH CS
-    PUSH ES
-    PUSH EBP
-    PUSH ESP
-    PUSHF
-    MOV EAX, CR3
-    PUSH EAX
-    CALL tss_crear_idle
-    SUB ESP, 40
+    ; PUSH GS
+    ; PUSH FS
+    ; PUSH DS
+    ; PUSH SS
+    ; PUSH CS
+    ; PUSH ES
+    ; PUSH EBP
+    ; PUSH ESP
+    ; PUSHF
+    ; MOV EAX, CR3
+    ; PUSH EAX
+    ; CALL tss_crear_idle
+    ; SUB ESP, 40
+    mov edi,0x00005420
+    ;add edi,104
+    mov eax,cr3
+    mov [edi+28],eax
+    mov dword [edi+32],0x16000
+    mov dword [edi+36],0x46
+    mov dword [edi+56],0x27000
+    mov dword [edi+60],0x27000
+    mov word [edi+72],0x48
+    mov word [edi+76],0x40
+    mov word [edi+80],0x48
+    mov word [edi+84],0x48
+    mov word [edi+88],0x48
+    mov word [edi+92],0x48
+    mov word [edi+102],0xFFFF
+    
     XOR EAX, EAX
     MOV AX, 0x68
     LTR AX
