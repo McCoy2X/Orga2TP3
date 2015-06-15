@@ -16,12 +16,17 @@ extern fin_intr_pic1
 
 ;; Sched
 extern sched_tick
-extern sched_tarea_actualsched_tarea_actual
+extern sched_tarea_actual
+extern sched_proxima_a_ejecutar
 
 ;; Screen
 extern screen_actualizar_reloj_global
 extern print
 
+;; Game
+extern game_syscall_pirata_mover
+extern game_syscall_pirata_cavar
+extern game_syscall_pirata_posicion
 
 ;;
 ;; Definición de MACROS
@@ -78,7 +83,11 @@ _isr32:
 	pushad
 
 	call fin_intr_pic1
-	call screen_actualizar_reloj_global
+	call sched_proxima_a_ejecutar
+	push eax
+	;call screen_actualizar_reloj_global
+	call sched_tick
+	add esp, 4
 	
 	popad
 	iret
@@ -103,9 +112,9 @@ _isr33:
 	
 	mov ecx, 0x000F000F
 	push ecx
-	mov ecx, 10
+	mov ecx, 0
 	push ecx
-	mov ecx, 10
+	mov ecx, 0
 	push ecx
 	push ebx
 	
@@ -122,10 +131,54 @@ _isr33:
 global _isr70
 _isr70:
 	pushad
+	mov ebx, eax ; Codigo del syscall
+	mov esi, ecx ; Parametro secundario
 
 	call fin_intr_pic1
 
-	mov eax, 0x42
+	cmp ebx, 0x1
+	je .moverse
+	cmp ebx, 0x2
+	je .cavar
+	cmp ebx, 0x3
+	je .posicion
 
+	jmp .fin
+
+	.moverse:
+		call sched_tarea_actual
+		push esi
+		push eax
+		call game_syscall_pirata_mover
+		add esp, 8
+		jmp .fin
+
+	.cavar:
+		call sched_tarea_actual
+		push eax
+		call game_syscall_pirata_cavar
+		add esp, 4
+		jmp .fin
+
+	.posicion:
+		call sched_tarea_actual
+		push esi
+		push eax
+		call game_syscall_pirata_posicion
+		add esp, 8
+		jmp .fineax
+
+	.fin:
 	popad
+	iret
+
+	.fineax:
+	pop edi
+	pop esi
+	pop ebp
+	add esp, 4
+	pop ebx
+	pop edx
+	pop ecx
+	add esp, 4
 	iret

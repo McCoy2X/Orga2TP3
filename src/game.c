@@ -116,6 +116,7 @@ void game_pirata_inicializar(pirata_t *pirata, jugador_t *j, uint index, uint id
 
 void game_tick(uint id_pirata)
 {
+    screen_actualizar_reloj_global();
 }
 
 
@@ -151,6 +152,10 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
     return 0;
 }
 
+uint game_syscall_pirata_cavar(uint id) {
+    return 0;
+}
+
 uint game_syscall_cavar(uint id)
 {
     // ~ completar ~
@@ -160,8 +165,21 @@ uint game_syscall_cavar(uint id)
 
 uint game_syscall_pirata_posicion(uint id, int idx)
 {
+    if(idx == -1) {
+        if(id > 14 && id < 23) {
+            return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posY;
+        } else {
+            return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posY;
+        }
+    } else {
+        if(id > 14 && id < 23) {
+            return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posY;
+        } else {
+            return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posY;
+        }
+    }
     // ~ completar ~
-    return 0;
+    return 2;
 }
 
 uint game_syscall_manejar(uint syscall, uint param1)
