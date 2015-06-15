@@ -10,4 +10,13 @@
 
 #include "game.h"
 
+typedef struct datosSched
+{
+    char proxJugador;
+} datosSched;
+
+extern datosSched dSched;
+
+void inicializar_sched();
+
 #endif	/* !__SCHED_H__ */
