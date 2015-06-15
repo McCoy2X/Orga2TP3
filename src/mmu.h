@@ -21,5 +21,8 @@ void mmu_inicializar_dir_kernel();
 int* mmu_inicializar_dir_pirata();
 
 int* mmu_get_pagina();
+void mmu_copiar_pagina(int* original, int* copia);
+void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3);
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica);
 
 #endif	/* !__MMU_H__ */

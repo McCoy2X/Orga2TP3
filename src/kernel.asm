@@ -13,7 +13,7 @@ extern screen_pintar_puntajes
 extern idt_inicializar
 extern print_group
 
-extern mmu_inicializar
+extern inicializar_mmu
 extern mmu_inicializar_dir_pirata
 extern mmu_inicializar_dir_kernel
 
@@ -111,7 +111,7 @@ start:
     ; Imprimir el nombre del grupo
     CALL print_group
 
-    CALL mmu_inicializar
+    CALL inicializar_mmu
     ; PUSH 0x100000   ;codigo
     ; PUSH 0x200000   ;posMapa
     ; CALL mmu_inicializar_dir_pirata

@@ -76,8 +76,8 @@ void completar_tabla_tss(tss tss_libre, void* codigo_tarea, int* posicion_cr3) {
     else { pos_mapa = INICIO_PIRATAB; }
     int* cr3 = mmu_inicializar_dir_pirata(pos_mapa, codigo_tarea);
 
-    tss_libre.esp      = 0x00027000;
-    tss_libre.ebp      = 0x00027000;
+    tss_libre.esp      = 0x00400FF4;
+    tss_libre.ebp      = 0x00401000;
     tss_libre.eip      = (int)codigo_tarea;
     tss_libre.cr3      = (int)cr3;
     tss_libre.es       = 0x0048;
@@ -88,7 +88,7 @@ void completar_tabla_tss(tss tss_libre, void* codigo_tarea, int* posicion_cr3) {
     tss_libre.gs       = 0x0048;
     tss_libre.eflags   = 0x00000202;
     tss_libre.iomap    = 0xFFFF;
-    tss_libre.esp0     = 0x00027000;
+    tss_libre.esp0     = (int)mmu_get_pagina;
     tss_idle.ss0       = 0x0048;
 
     (*posicion_cr3) = (int)cr3;

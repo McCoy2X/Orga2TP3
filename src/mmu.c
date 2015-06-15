@@ -21,7 +21,7 @@
 /* -------------------------------------------------------------------------- */
 
 // Inicializo em manager de memoria en la posicion MEM_MANAGER, salto a la siguiente pagina
-void mmu_inicializar() {
+void inicializar_mmu() {
 	int* mem_manager = (int*)MEM_MANAGER;
 	(*mem_manager) = (MEM_MANAGER + PAGE_SIZE);
 }
@@ -47,6 +47,28 @@ void mmu_inicializar_dir_kernel() {
 		(*table) = (i << 12) | 0x003;
 		table += 1;
 	}
+}
+
+// Inicializar un directorio de tablas y tabla de una tarea
+int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, int* codigo) {
+	int i;
+	int* dir = mmu_get_pagina();
+	int* table = mmu_get_pagina();
+
+	(*dir) = ((0x28) << 12) | 0x003;
+	table = (int*)(DIR_PAGINAS_KERNEL + PAGE_SIZE);
+
+	for(i = 0; i < 1024; i++) {
+		(*table) = (i << 12) | 0x003;
+		table += 1;
+	}
+	
+	unsigned int virtual = 0x0400000 + PAGE_SIZE;
+	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
+	mmu_copiar_pagina(codigo, (int*)virtual);
+	mmu_unmapear_pagina(virtual, (unsigned int)dir);
+
+	return dir;
 }
 
 // Copia la pagina original a copia
@@ -96,26 +118,4 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
 
 	int* table = (int*)((*dir) + table_offset);
 	(*table) = (*table) & 0xFFFFF000;
-}
-
-// Inicializar un directorio de tablas y tabla de una tarea
-int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, int* codigo) {
-	int i;
-	int* dir = mmu_get_pagina();
-	int* table = mmu_get_pagina();
-
-	(*dir) = ((0x28) << 12) | 0x003;
-	table = (int*)(DIR_PAGINAS_KERNEL + PAGE_SIZE);
-
-	for(i = 0; i < 1024; i++) {
-		(*table) = (i << 12) | 0x003;
-		table += 1;
-	}
-	
-	unsigned int virtual = 0x0400000 + PAGE_SIZE;
-	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
-	mmu_copiar_pagina(codigo, (int*)virtual);
-	mmu_unmapear_pagina(virtual, (unsigned int)dir);
-
-	return dir;
 }
