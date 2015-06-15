@@ -112,12 +112,10 @@ start:
     CALL print_group
 
     CALL mmu_inicializar
-    MOV  EAX, CR3
-    PUSH EAX        ;cr3
-    PUSH 0x100000   ;codigo
-    PUSH 0x200000   ;posMapa
-    CALL mmu_inicializar_dir_pirata
-    SUB  ESP, 12
+    ; PUSH 0x100000   ;codigo
+    ; PUSH 0x200000   ;posMapa
+    ; CALL mmu_inicializar_dir_pirata
+    ; SUB  ESP, 12
 
     ; Inicializar tss
     CALL tss_inicializar

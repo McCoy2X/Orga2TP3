@@ -34,6 +34,8 @@ typedef unsigned int   uint;
 #define BOOTSECTOR              0x00001000 /* direccion fisica de comienzo del bootsector (copiado) */
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
 
+#define INICIO_PIRATAA			0x0 //Posicion de memoria de A (1, 1)
+#define INICIO_PIRATAB			0x0 //Posicion de memoria de B (78, 48)
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */

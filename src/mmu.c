@@ -99,7 +99,7 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
 }
 
 // Inicializar un directorio de tablas y tabla de una tarea
-void mmu_inicializar_dir_pirata(unsigned int posMapa, int* codigo, unsigned int cr3) {
+int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, int* codigo) {
 	int i;
 	int* dir = mmu_get_pagina();
 	int* table = mmu_get_pagina();
@@ -113,7 +113,9 @@ void mmu_inicializar_dir_pirata(unsigned int posMapa, int* codigo, unsigned int 
 	}
 	
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
-	mmu_mapear_pagina(virtual, cr3, posMapa);
+	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
 	mmu_copiar_pagina(codigo, (int*)virtual);
-	mmu_unmapear_pagina(virtual, cr3);
+	mmu_unmapear_pagina(virtual, (unsigned int)dir);
+
+	return dir;
 }

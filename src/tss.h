@@ -60,5 +60,6 @@ extern tss tss_jugadorA[];
 extern tss tss_jugadorB[];
 
 void tss_inicializar();
+void agregar_descriptor_tss();
 
 #endif  /* !__TSS_H__ */
