@@ -148,12 +148,159 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 
 uint game_syscall_pirata_mover(uint id, direccion dir)
 {
-    // ~ completar
+    // MAPEAR PAGINAS
+    unsigned int cr3 = 0x00100100 + (15 - id) * 0x00000004;
+
+    if(id > 14 && id < 23) {
+        uint posY = (jugadorA.piratas[id - 15]).posY;
+        uint posX = (jugadorA.piratas[id - 15]).posX;
+        char nombreJugador = 'A';
+    } else if(id >= 23 && id < 31) {
+        uint posY = (jugadorB.piratas[id - 23]).posY;
+        uint posX = (jugadorB.piratas[id - 23]).posX;
+        char nombreJugador = 'B';
+    }
+
+    if(id > 14 && id < 31) {
+
+        if(dir == 4) {
+            if(posY != 0) {
+                if(posY != 1) {
+                    if(posX == 0) {
+                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+
+                    } else if(posX == 79) {
+                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+
+                    } else {
+                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+
+                    }
+                }
+
+                mmu_copiar_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+
+                if(nombreJugador == 'A') {
+                    (jugadorA.piratas[id - 15]).posY = posY - 1;
+                } else {
+                    (jugadorB.piratas[id - 23]).posY = posY - 1;
+                }
+            }
+        } else if(dir == 7) {
+            if(posY != MAPA_ALTO - 1) {
+                if(posY != MAPA_ALTO - 2) {
+                    if(posX == 0) {
+                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+
+                    } else if(posX == MAPA_ANCHO - 1) {
+                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+
+                    } else {
+                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+
+                    }
+                }
+
+                mmu_copiar_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+
+                if(nombreJugador == 'A') {
+                    (jugadorA.piratas[id - 15]).posY = posY + 1;
+                } else {
+                    (jugadorB.piratas[id - 23]).posY = posY + 1;
+                }
+            }
+        } else if(dir == 10) {
+            if(posX != MAPA_ANCHO - 1) {
+                if(posX != MAPA_ANCHO - 2) {
+                    if(posY == 0) {
+                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+
+                    } else if(posY == MAPA_ALTO - 1) {
+                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+
+                    } else {
+                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+
+                    }
+                }
+
+                mmu_copiar_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+
+                if(nombreJugador == 'A') {
+                    (jugadorA.piratas[id - 15]).posX = posX + 1;
+                } else {
+                    (jugadorB.piratas[id - 23]).posX = posX + 1;
+                }
+            }
+
+        } else if(dir == 13) {
+            if(posX != 0) {
+                if(posX != 1) {
+                    if(posY == 2) {
+                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+
+                    } else if(posY == MAPA_ALTO - 1) {
+                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+
+                    } else {
+                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
+
+                    }
+                }
+
+                mmu_copiar_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+
+                if(nombreJugador == 'A') {
+                    (jugadorA.piratas[id - 15]).posX = posX - 1;
+                } else {
+                    (jugadorB.piratas[id - 23]).posX = posX - 1;
+                }
+            }
+        }
+    }
+
     return 0;
 }
 
 uint game_syscall_pirata_cavar(uint id) {
-    return 0;
+    if(id > 14 && id < 23) {
+        uint posY = (jugadorA.piratas[id - 15]).posY;
+        uint posX = (jugadorA.piratas[id - 15]).posX;
+        char nombreJugador = 'A';
+    } else if(id >= 23 && id < 31) {
+        uint posY = (jugadorB.piratas[id - 23]).posY;
+        uint posX = (jugadorB.piratas[id - 23]).posX;
+        char nombreJugador = 'B';
+    }
+
+    for(int i = 0; i < BOTINES_CANTIDAD; i++) {
+        if(botines[i][0] == posX && botines[i][1] == posY) {
+            if(botines[i][2] == 0) {
+                return 1;
+            } else {
+                botines[i][2]--;
+                return 0;
+            }
+        }
+    }   
+
+    return 1;
 }
 
 uint game_syscall_cavar(uint id)
@@ -172,14 +319,14 @@ uint game_syscall_pirata_posicion(uint id, int idx)
             return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posY;
         }
     } else {
-        if(id > 14 && id < 23) {
-            return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posY;
+        if(id >= 23 && id < 31) {
+            return (jugadorA.piratas[(uint)idx - 15]).posY << 8 | (jugadorA.piratas[(uint)idx - 15]).posY;
         } else {
-            return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posY;
+            return (jugadorB.piratas[(uint)idx - 24]).posY << 8 | (jugadorB.piratas[(uint)idx - 24]).posY;
         }
     }
     // ~ completar ~
-    return 2;
+    return 0;
 }
 
 uint game_syscall_manejar(uint syscall, uint param1)

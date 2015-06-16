@@ -30,6 +30,7 @@ typedef unsigned int   uint;
 #define TSS_IDLE_DATA			0x00100064
 #define PAGE_COPY				0x00101000
 #define MAPA 					0x00500000
+#define MAPA_VIRTUAL            0x00800000
 
 #define BOOTSECTOR              0x00001000 /* direccion fisica de comienzo del bootsector (copiado) */
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
