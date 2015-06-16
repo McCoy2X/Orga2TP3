@@ -33,6 +33,7 @@ typedef struct pirata_t
     uint posX;
     uint posY;
     char posReloj;
+    uint piratasEnJuego;
 
     // id unica, posicion, tipo, reloj
 } pirata_t;

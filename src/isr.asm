@@ -18,6 +18,7 @@ extern fin_intr_pic1
 extern sched_tick
 extern sched_tarea_actual
 extern sched_proxima_a_ejecutar
+extern sched_syscall
 
 ;; Screen
 extern screen_actualizar_reloj_global
@@ -165,11 +166,14 @@ _isr70:
 		push esi
 		push eax
 		call game_syscall_pirata_posicion
-		add esp, 8
-		jmp .fineax
+		push eax
+		call sched_syscall
+		add esp, 12
+		jmp .fin
 
 	.fin:
 	popad
+	jmp 0x70:0
 	iret
 
 	.fineax:
@@ -181,4 +185,5 @@ _isr70:
 	pop edx
 	pop ecx
 	add esp, 4
+	jmp 0x70:0
 	iret
