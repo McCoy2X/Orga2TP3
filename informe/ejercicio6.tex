@@ -1,2 +1,26 @@
 \section{Ejercicio 6}
 
+Para resolver este ejercicio se modicara \texttt{tss.h}, \texttt{tss.c}, \texttt{kernel.asm} y \texttt{defines.h}.
+
+\subsection{a}
+Primero vamos a \texttt{defines.h} y definimos los indices de los descriptores de \textbf{TSS} en la \textbf{GDT}. \\
+\texttt{TSS\_INICIAL	13} \\
+\texttt{TSS\_IDLE		14} \\
+
+\subsection{b}
+Para este punto definimos \texttt{tss\_inicializar} en \texttt{tss.h/c} para crear la tabla de \texttt{tss\_idle}, con \texttt{EIP} en \texttt{0x16000}, con el mismo \textbf{CR3} que el kernel, la misma pila, y los descriptores de segmento de datos y codigo de nivel 0.
+
+\subsection{c}
+Definimos \texttt{completar\_tabla\_tss} en \texttt{tss.h/c} que toma una tabla \textbf{TSS}, un puntero a codigo de la tarea y un puntero a un lugar donde guardar la \textbf{CR3}.
+
+\subsection{d, e}
+Luego definimos la funcion \texttt{agregar\_descriptor\_tss} en \texttt{tss.h/c} que toma como parametro un indice de la \textbf{GDT} y un puntero a un puntero a una tabla tss y agrega en la \textbf{GDT} un descriptor de \textbf{TSS} en el indice.
+Luego modificamos \texttt{tss\_inicializar} y usamos \texttt{agregar\_descriptor\_tss} para agregar el descriptor de \texttt{tss\_inicial} y \texttt{tss\_idle}.
+
+\subsection{f}
+Para saltar a la tarea idle vamos a modificar \texttt{kernel.asm}, primero limpiamos \texttt{EAX} ya que vamos a pasar el descriptor de \textbf{TSS} de \texttt{tss\_inicial} a ese registro, movemos el indice del descriptor a \texttt{AX} (\texttt{0x68}) y usando \texttt{LTR} lo cargamos en el registro especial de tareas. Luego hacemos un \texttt{JMP FAR} a el indice del descriptor de tareas en la \textbf{GDT} de \texttt{tss\_idle} (\texttt{0x70}).
+
+\subsection{g}
+
+
+\subsection{h}

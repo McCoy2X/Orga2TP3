@@ -1,15 +1,15 @@
 \section{Ejercicio 3}
 
-Para resolver este ejercicio se modicara screen.c, screen.h, mmu.c, mmu.h, kernel.asm y defines.h.
+Para resolver este ejercicio se modicara \texttt{screen.c}, \texttt{screen.h}, \texttt{mmu.c}, \texttt{mmu.h}, \texttt{kernel.asm} y \texttt{defines.h}.
 
-(a)
-Para comenzar vamos a modificar screen.c y screen.h, creamos la funcion en C screen_refrescar que se enrgara de limpiar la pantalla y dibujar el fondo screen_inicializar y escribir la informacion del sistema (Los datos de ambos jugadores, los puntajes, y los graficos de reloj de idle y del sistema) usando print.
+\subsection{a}
+Para comenzar vamos a modificar \texttt{screen.c} y \texttt{screen.h}, creamos la funcion en \texttt{C} \texttt{screen\_refrescar} que se encargara de limpiar la pantalla y dibujar el fondo usando \texttt{screen\_inicializar} y luego escribir la informacion del sistema (Los datos de las tareas de ambos jugadores y los puntajes) usando la funcion \texttt{print} (Brindada por la catedra).
 
-(b)
-Definimos DIR_PAGINAS_KERNEL como 0x27000 en defines.h, luego vamos a mmu.h y creamos mmu_inicializar_dir_kernel, esta funcion crea en la posicion de memoria de DIR_PAGINAS_KERNEL el directorio de tablas de paginas y en la siguiente pagina (0x28000) la primera tabla de paginas que posee las paginas de 0x0 a 0x3FFFFF con identity mapping.
+\subsection{b}
+Definimos \texttt{DIR\_PAGINAS\_KERNEL} como \texttt{0x27000} en \texttt{defines.h}, luego vamos a \texttt{mmu.h} y creamos \texttt{mmu\_inicializar\_dir\_kernel}, esta funcion crea en la posicion de memoria de \texttt{DIR\_PAGINAS\_KERNEL} el directorio de tablas de paginas y en la siguiente pagina (\texttt{0x28000}) la primera tabla de paginas que posee las paginas de \texttt{0x0} a \texttt{0x3FFFFF} con identity mapping.
 
-(c)
-Vamos a kernel.asm y llamamos el extern mmu_inicializar_dir_kernel para crear el directorio de tablas y las tablas. Luego muevo a CR3 la posicion del directorio de tablas de paginas (DIR_PAGINAS_KERNEL). Luego para activar paginacion seteamos el bit PG (Paging) de CR0.
+\subsection{c}
+Vamos a \texttt{kernel.asm} y llamamos el extern \texttt{mmu\_inicializar\_dir\_kernel} para crear el directorio de tablas y las tablas. Luego muevo a \textbf{CR3} la posicion del directorio de tablas de paginas (\texttt{DIR\_PAGINAS\_KERNEL}). Luego para activar paginacion seteamos el bit \textbf{PG} (Paging) de \textbf{CR0}.
 
-(d)
-Para terminar en screen.c/h creamos la funcion print_group que usa print para escribir el nombre del grupo (Alineado a la derecha) y la llamamos desde kernel.asm, con esto podemos confirmar que la pagina esta funcionando.
+\subsection{d}
+Para terminar en \texttt{screen.c/h} creamos la funcion \texttt{print\_group} que usa print para escribir el nombre del grupo (Alineado a la derecha) y la llamamos desde \texttt{kernel.asm}, con esto podemos confirmar que la pagina esta funcionando.
