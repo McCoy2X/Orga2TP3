@@ -11,8 +11,8 @@ definicion de funciones del scheduler
 datosSched dSched;
 
 void inicializar_sched() {
-    dSched.proxJugador = 'I';
-    dSched.tareaActual = 13;
+    dSched.proxJugador = 'A'; // Jugador inicial elegido arbitrariamente
+    dSched.tareaActual = 14;
     
     jugadorA.proxPirata = 8;
     jugadorA.piratasEnJuego = 0;
@@ -35,9 +35,9 @@ uint sched_proxima_a_ejecutar() {
     	} else {
         	return 23 + jugadorB.proxPirata;
         }
-    } else {
-        return 14; // TAREA IDLE
     }
+
+    return 14;
 }
 
 uint sched_tick(uint id) {
@@ -45,6 +45,7 @@ uint sched_tick(uint id) {
     uint tPirata;
     uint nPirata;
     int i;
+    uint nuevoId = id;
 
     if(dSched.proxJugador == 'A') {
     	dSched.proxJugador = 'B';
@@ -68,7 +69,7 @@ uint sched_tick(uint id) {
 	   	}
 
 	   	jugadorB.proxPirata = nPirata;
-    } else {
+    } else if(dSched.proxJugador == 'B') {
     	dSched.proxJugador = 'A';
     	if(jugadorA.piratasEnJuego == 0) {
     		nPirata = 8;
@@ -92,7 +93,8 @@ uint sched_tick(uint id) {
 	   	jugadorB.proxPirata = nPirata;
     }
 
-    return id << 3;
+	dSched.tareaActual = nuevoId;
+    return nuevoId << 3;
 }
 
 uint sched_tarea_actual() {

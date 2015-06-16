@@ -88,8 +88,20 @@ _isr32:
 	push eax
 	;call screen_actualizar_reloj_global
 	call sched_tick
+	xor ecx, ecx
+	str cx
+	xchg bx, bx 
+	cmp ax, cx
+	je .fin
+
+	xchg bx, bx
+	mov [sched_tarea_selector], ax
+	jmp far [sched_tarea_offset]
+	;jmp 0x70:0
+	xchg bx, bx
+
+	.fin:
 	add esp, 4
-	
 	popad
 	iret
 

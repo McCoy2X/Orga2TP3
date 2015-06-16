@@ -164,6 +164,9 @@ start:
     ; Configurar controlador de interrupciones
     call resetear_pic
     call habilitar_pic
+    XOR EAX, EAX
+    MOV AX, 0x68
+    LTR AX
     sti
 
     ; Cargar tarea inicial
@@ -171,9 +174,6 @@ start:
     ; Habilitar interrupciones
 
     ; Saltar a la primera tarea: Idle
-    XOR EAX, EAX
-    MOV AX, 0x68
-    LTR AX
     JMP 0x70:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
