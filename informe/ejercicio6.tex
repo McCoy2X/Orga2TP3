@@ -3,18 +3,18 @@
 Para resolver este ejercicio se modicara \texttt{tss.h}, \texttt{tss.c}, \texttt{kernel.asm} y \texttt{defines.h}.
 
 \subsection{a}
-Primero vamos a \texttt{defines.h} y definimos los indices de los descriptores de \textbf{TSS} en la \textbf{GDT}. \\
+Primero vamos a \texttt{defines.h} y definimos los indices de los descriptores de \textbf{TSS} en la \textbf{GDT} para las tareas inicial e idle. \\
 \texttt{TSS\_INICIAL	13} \\
-\texttt{TSS\_IDLE		14} \\
+\texttt{TSS\_IDLE		14}
 
 \subsection{b}
-Para este punto definimos \texttt{tss\_inicializar} en \texttt{tss.h/c} para crear la tabla de \texttt{tss\_idle}, con \texttt{EIP} en \texttt{0x16000}, con el mismo \textbf{CR3} que el kernel, la misma pila, y los descriptores de segmento de datos y codigo de nivel 0.
+Para este punto definimos \texttt{tss\_inicializar} en \texttt{tss.h/c} que crea la tabla de \texttt{tss\_idle}, con \texttt{EIP} en \texttt{0x16000}, con el mismo \textbf{CR3} que el kernel, la misma pila, y los descriptores de segmento de datos y codigo de nivel 0.
 
 \subsection{c}
-Definimos \texttt{completar\_tabla\_tss} en \texttt{tss.h/c} que toma una tabla \textbf{TSS}, un puntero a codigo de la tarea y un puntero a un lugar donde guardar la \textbf{CR3}.
+Definimos \texttt{completar\_tabla\_tss} en \texttt{tss.h/c} que toma una tabla \textbf{TSS}, un puntero a codigo de la tarea y un puntero a un lugar donde guardar la \textbf{CR3}, luego dependiendo de donde se encuentre el codigo de la tarea lea asigna la posicion de inicio del jugar 1 o 2 (Desde 0x10000 las dos primeras paginas son codigo del jugador 1 y las otras 2 del jugador 2), crea un mapa de memoria usando \texttt{mmu\_inicializar\_dir\_pirata} y lo asigna como \textbf{CR3} de la tabla, setea los selectores de segmento, los flags y guarda el \textbf{CR3} en una parte asignada de la primera pagina del area libre.
 
 \subsection{d, e}
-Luego definimos la funcion \texttt{agregar\_descriptor\_tss} en \texttt{tss.h/c} que toma como parametro un indice de la \textbf{GDT} y un puntero a un puntero a una tabla tss y agrega en la \textbf{GDT} un descriptor de \textbf{TSS} en el indice.
+Definimos la funcion \texttt{agregar\_descriptor\_tss} en \texttt{tss.h/c} que toma como parametro un indice de la \textbf{GDT} y un puntero a un puntero a una tabla tss y agrega en la \textbf{GDT} un descriptor de \textbf{TSS} en el indice.
 Luego modificamos \texttt{tss\_inicializar} y usamos \texttt{agregar\_descriptor\_tss} para agregar el descriptor de \texttt{tss\_inicial} y \texttt{tss\_idle}.
 
 \subsection{f}

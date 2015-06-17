@@ -13,3 +13,13 @@ Para la tarea anterior es neceario crear las dos funcciones \texttt{mmu\_mapear\
 
 \subsection{d}
 Para este punto vamos a \texttt{kernel.asm} y creamos un segmento de codigo para testear las cosas echas. Llamamos a \texttt{mmu\_inicializar\_dir\_pirata} y cambiamos el \textbf{CR3} del sistema con el que devuelve la funcion. Modificamos la memoria de video para cambiar el color de fondo del primer caracter de la pantalla. Esto luego fue eliminado del kernel.asm como pide el subindice.
+\begin{lstlisting}
+	PUSH <POS_CODIGO>
+    MOV EAX, CR3
+    PUSH EAX
+    PUSH <POS_PIRATA>
+    CALL mmu_inicializar_dir_pirata
+    SUB ESP, 12
+    MOV CR3, EAX
+    CALL print_group
+\end{lstlisting}

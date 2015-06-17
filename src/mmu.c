@@ -23,7 +23,7 @@
 // Inicializo em manager de memoria en la posicion MEM_MANAGER, salto a la siguiente pagina
 void inicializar_mmu() {
 	int* mem_manager = (int*)MEM_MANAGER;
-	(*mem_manager) = (MEM_MANAGER + PAGE_SIZE);
+	(*mem_manager) = (MEM_MANAGER + PAGE_SIZE * 2);
 }
 
 // Pedir una pagina al kernel, se mueve a la siguiente pagina libre, y devuelve la pagina 
@@ -40,7 +40,7 @@ void mmu_inicializar_dir_kernel() {
 	int* dir = (int*)DIR_PAGINAS_KERNEL;
 	int* table;
 	
-	(*dir) = ((0x28) << 12) | 0x003;
+	(*dir) = (0x28003);
 	table = (int*)(DIR_PAGINAS_KERNEL + PAGE_SIZE);
 
 	for(i = 0; i < 1024; i++) {
@@ -50,23 +50,22 @@ void mmu_inicializar_dir_kernel() {
 }
 
 // Inicializar un directorio de tablas y tabla de una tarea
-int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, int* codigo) {
+int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* codigo) {
 	int i;
 	int* dir = mmu_get_pagina();
 	int* table = mmu_get_pagina();
 
-	(*dir) = ((0x28) << 12) | 0x003;
-	table = (int*)(DIR_PAGINAS_KERNEL + PAGE_SIZE);
+	(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
 
 	for(i = 0; i < 1024; i++) {
 		(*table) = (i << 12) | 0x003;
 		table += 1;
 	}
-	
+
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
-	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
+	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
 	mmu_copiar_pagina(codigo, (int*)virtual);
-	mmu_unmapear_pagina(virtual, (unsigned int)dir);
+	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
 
 	return dir;
 }
@@ -74,14 +73,12 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, int* codigo) {
 // Copia la pagina original a copia
 void mmu_copiar_pagina(int* original, int* copia) {
 	int i;
-	int temp;
 	
 	for(i = 0; i < 128; i++) {
-		temp = (*original);
-		(*copia) = temp;
+		(*copia) = (*original);
 
-		original = original + 4;
-		copia = copia + 4;
+		original = (int*)(original + 4);
+		copia = (int*)(copia + 4);
 	}
 }
 
@@ -94,14 +91,14 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 	dir += directory_offset;
 
 	int* table;
-	if((*dir & 0x1) == 1) {
+	if(((*dir) & 0x1) == 1) {
 		table = (int*)((*dir) & 0xFFFFF000);
-
 		table += table_offset;
+
 		(*table) = (fisica & 0xFFFFF000) | 0x003;
 	} else {
-		table = (int*)PAGE_COPY;
-		(*dir) = ((int)table & 0xFFFFF000) | 0x003;
+		table = mmu_get_pagina();
+		(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
 
 		table += table_offset;
 		(*table) = (fisica & 0xFFFFF000) | 0x003;

@@ -88,7 +88,7 @@ void completar_tabla_tss(tss tss_libre, void* codigo_tarea, int* posicion_cr3) {
     tss_libre.gs       = 0x0048;
     tss_libre.eflags   = 0x00000202;
     tss_libre.iomap    = 0xFFFF;
-    tss_libre.esp0     = (int)mmu_get_pagina;
+    tss_libre.esp0     = (int)mmu_get_pagina();
     tss_idle.ss0       = 0x0048;
 
     (*posicion_cr3) = (int)cr3;
