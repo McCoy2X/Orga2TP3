@@ -72,22 +72,8 @@ typedef unsigned int   uint;
 
 /* Valores CR3 para las tareas */
 /* -------------------------------------------------------------------------- */
-#define CR3_JUGADORA_1           0x00100100
-#define CR3_JUGADORA_2           0x00100104
-#define CR3_JUGADORA_3           0x00100108
-#define CR3_JUGADORA_4           0x00100112
-#define CR3_JUGADORA_5           0x00100116
-#define CR3_JUGADORA_6           0x00100120
-#define CR3_JUGADORA_7           0x00100124
-#define CR3_JUGADORA_8           0x00100128
-#define CR3_JUGADORB_1           0x00100132
-#define CR3_JUGADORB_2           0x00100136
-#define CR3_JUGADORB_3           0x00100140
-#define CR3_JUGADORB_4           0x00100144
-#define CR3_JUGADORB_5           0x00100148
-#define CR3_JUGADORB_6           0x00100152
-#define CR3_JUGADORB_7           0x00100156
-#define CR3_JUGADORB_8           0x00100160
+#define CR3_JUGADORA            0x00100100
+#define CR3_JUGADORB            0x00100132
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */

@@ -5,6 +5,7 @@
   definicion de funciones del manejador de memoria
 */
 
+#include "game.h"
 #include "mmu.h"
 #include "i386.h"
 /* Atributos paginas */
@@ -67,6 +68,16 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	mmu_copiar_pagina(codigo, (int*)virtual);
 	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
 
+	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80 - PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80 - PAGE_SIZE);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80 + PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80 + PAGE_SIZE);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80 - PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80 - PAGE_SIZE);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80 + PAGE_SIZE);
+
 	return dir;
 }
 
@@ -115,4 +126,60 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
 
 	int* table = (int*)((*dir) + table_offset);
 	(*table) = (*table) & 0xFFFFF000;
+}
+
+void mmu_mapear_pirata_V(char jugador, int posX, int posY) {
+	int i;
+	jugador_t* j;
+	int* cr3s;
+
+	if(jugador == 'A') {
+		cr3s = (int*)CR3_JUGADORA;
+		j = &jugadorA;
+	} else {
+		cr3s = (int*)CR3_JUGADORB;
+		j = &jugadorB;
+	}
+
+	for(i = 0; i < MAX_CANT_PIRATAS_VIVOS; i++) {
+		int cr3 = *(cr3s + 4 * i);
+
+		if((*j).piratas[i].enJuego == TRUE) {
+			if(posX >= 0) {
+		        mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + posX * PAGE_SIZE);
+		    }
+		    mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + (posX + 1) * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + (posX + 1) * PAGE_SIZE);
+		    if(posX + 2 < 79) {
+		    	mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + (posX + 2) * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + (posX + 2) * PAGE_SIZE);
+		    }
+		}
+	}
+}
+
+void mmu_mapear_pirata_H(char jugador, int posX, int posY) {
+	int i;
+	jugador_t* j;
+	int* cr3s;
+
+	if(jugador == 'A') {
+		cr3s = (int*)CR3_JUGADORA;
+		j = &jugadorA;
+	} else {
+		cr3s = (int*)CR3_JUGADORB;
+		j = &jugadorB;
+	}
+
+	for(i = 0; i < MAX_CANT_PIRATAS_VIVOS; i++) {
+		int cr3 = *(cr3s + 4 * i);
+
+		if((*j).piratas[i].enJuego == TRUE) {
+			if(posX >= 0) {
+		        mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + posX * PAGE_SIZE);
+		    }
+		    mmu_mapear_pagina(MAPA + (posY + 1) * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY + 1) * MAPA_ANCHO + posX * PAGE_SIZE);
+		    if(posY + 2 < 79) {
+		    	mmu_mapear_pagina(MAPA + (posY + 2) * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY + 2) * MAPA_ANCHO + posX * PAGE_SIZE);
+		    }
+		}
+	}
 }

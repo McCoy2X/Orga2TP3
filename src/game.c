@@ -149,7 +149,7 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 uint game_syscall_pirata_mover(uint id, direccion dir)
 {
     // MAPEAR PAGINAS
-    unsigned int cr3 = 0x00100100 + (15 - id) * 0x00000004;
+    //unsigned int cr3 = 0x00100100 + (15 - id) * 0x00000004;
 
     uint posY;
     uint posX;
@@ -170,20 +170,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         if(dir == 4) {
             if(posY != 0) {
                 if(posY != 1) {
-                    if(posX == 0) {
-                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-
-                    } else if(posX == 79) {
-                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
-
-                    } else {
-                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-
-                    }
+                    mmu_mapear_pirata_H(nombreJugador, ((int)posX) - 1, ((int)posY) - 1);
                 }
 
                 mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
@@ -197,20 +184,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         } else if(dir == 7) {
             if(posY != MAPA_ALTO - 1) {
                 if(posY != MAPA_ALTO - 2) {
-                    if(posX == 0) {
-                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2)  * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-
-                    } else if(posX == MAPA_ANCHO - 1) {
-                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
-
-                    } else {
-                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-
-                    }
+                    mmu_mapear_pirata_H(nombreJugador, ((int)posX) - 1, ((int)posY) + 1);
                 }
 
                 mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
@@ -224,20 +198,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         } else if(dir == 10) {
             if(posX != MAPA_ANCHO - 1) {
                 if(posX != MAPA_ANCHO - 2) {
-                    if(posY == 0) {
-                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-
-                    } else if(posY == MAPA_ALTO - 1) {
-                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-
-                    } else {
-                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
-
-                    }
+                    mmu_mapear_pirata_V(nombreJugador, ((int)posX) + 1, ((int)posY) - 1);
                 }
 
                 mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
@@ -252,20 +213,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         } else if(dir == 13) {
             if(posX != 0) {
                 if(posX != 1) {
-                    if(posY == 2) {
-                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-
-                    } else if(posY == MAPA_ALTO - 1) {
-                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-
-                    } else {
-                        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-                        mmu_mapear_pagina(MAPA + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY - 1)  * MAPA_ANCHO + (posX - 2)) * PAGE_SIZE);
-
-                    }
+                    mmu_mapear_pirata_V(nombreJugador, ((int)posX) - 1, ((int)posY) - 1);
                 }
 
                 mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
