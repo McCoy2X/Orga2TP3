@@ -186,7 +186,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
                 }
 
-                mmu_copiar_pagina((int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
 
                 if(nombreJugador == 'A') {
                     (jugadorA.piratas[id - 15]).posY = posY - 1;
@@ -213,7 +213,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
                 }
 
-                mmu_copiar_pagina((int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
 
                 if(nombreJugador == 'A') {
                     (jugadorA.piratas[id - 15]).posY = posY + 1;
@@ -240,7 +240,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
                 }
 
-                mmu_copiar_pagina((int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
+                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
 
                 if(nombreJugador == 'A') {
                     (jugadorA.piratas[id - 15]).posX = posX + 1;
@@ -268,7 +268,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
                 }
 
-                mmu_copiar_pagina((int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
+                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
 
                 if(nombreJugador == 'A') {
                     (jugadorA.piratas[id - 15]).posX = posX - 1;
