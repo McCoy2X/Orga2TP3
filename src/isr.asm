@@ -37,11 +37,21 @@ extern game_syscall_pirata_posicion
 global _isr%1
 
 _isr%1:
-	interrupcion_%1_msg db     'INTERRRUPCION ', %1
-	interrupcion_%1_len equ    $ - interrupcion_%1_msg
-	imprimir_texto_mp interrupcion_%1_msg, interrupcion_%1_len, 0x07, %1, 0
-    mov eax, %1
-    jmp $
+	pushad
+	call fin_intr_pic1
+	mov eax, 1
+	push eax
+	call sched_syscall
+	add esp, 4
+
+	popad
+	jmp 0x70:0
+	iret
+	; interrupcion_%1_msg db     'INTERRRUPCION ', %1
+	; interrupcion_%1_len equ    $ - interrupcion_%1_msg
+	; imprimir_texto_mp interrupcion_%1_msg, interrupcion_%1_len, 0x07, %1, 0
+ ;    mov eax, %1
+ ;    jmp $
 
 %endmacro
 
@@ -90,15 +100,11 @@ _isr32:
 	call sched_tick
 	xor ecx, ecx
 	str cx
-	xchg bx, bx 
 	cmp ax, cx
 	je .fin
 
-	xchg bx, bx
 	mov [sched_tarea_selector], ax
 	jmp far [sched_tarea_offset]
-	;jmp 0x70:0
-	xchg bx, bx
 
 	.fin:
 	add esp, 4
@@ -170,7 +176,9 @@ _isr70:
 		call sched_tarea_actual
 		push eax
 		call game_syscall_pirata_cavar
-		add esp, 4
+		push eax
+		call sched_syscall
+		add esp, 8
 		jmp .fin
 
 	.posicion:
@@ -178,10 +186,8 @@ _isr70:
 		push esi
 		push eax
 		call game_syscall_pirata_posicion
-		push eax
-		call sched_syscall
 		add esp, 12
-		jmp .fin
+		jmp .fineax
 
 	.fin:
 	popad

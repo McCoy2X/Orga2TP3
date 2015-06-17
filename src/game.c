@@ -320,15 +320,15 @@ uint game_syscall_pirata_posicion(uint id, int idx)
 {
     if(idx == -1) {
         if(id > 14 && id < 23) {
-            return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posY;
+            return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posX;
         } else {
-            return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posY;
+            return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posX;
         }
     } else {
         if(id >= 23 && id < 31) {
-            return (jugadorA.piratas[(uint)idx - 15]).posY << 8 | (jugadorA.piratas[(uint)idx - 15]).posY;
+            return (jugadorA.piratas[(uint)idx - 15]).posY << 8 | (jugadorA.piratas[(uint)idx - 15]).posX;
         } else {
-            return (jugadorB.piratas[(uint)idx - 24]).posY << 8 | (jugadorB.piratas[(uint)idx - 24]).posY;
+            return (jugadorB.piratas[(uint)idx - 24]).posY << 8 | (jugadorB.piratas[(uint)idx - 24]).posX;
         }
     }
     // ~ completar ~
