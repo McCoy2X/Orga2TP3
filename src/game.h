@@ -45,6 +45,7 @@ typedef struct jugador_t
 
     uint piratasEnJuego;
     uint proxPirata;
+    char posicionesMapeadas[3520]; // 80 x 44 posiciones
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 

@@ -23,6 +23,8 @@ extern habilitar_pic
 extern tss_inicializar
 extern tss_crear_idle
 
+extern inicializar_sched
+
 extern GDT_DESC
 extern IDT_DESC
 
@@ -108,12 +110,11 @@ start:
     ; Imprimir el nombre del grupo
     CALL print_group
     ; Inicializar tss
-    CALL tss_inicializar
     ; Inicializar tss de la tarea Idle
-
-
+    CALL tss_inicializar
+ 
     ; Inicializar el scheduler
-
+    call inicializar_sched
     
     ; Inicializar la IDT
     call idt_inicializar
@@ -124,7 +125,6 @@ start:
     ; Configurar controlador de interrupciones
     call resetear_pic
     call habilitar_pic
-    sti
 
     ; Cargar tarea inicial
     XOR EAX, EAX
@@ -132,6 +132,7 @@ start:
     LTR AX
 
     ; Habilitar interrupciones
+    sti
 
     ; Saltar a la primera tarea: Idle
     JMP 0x70:0
