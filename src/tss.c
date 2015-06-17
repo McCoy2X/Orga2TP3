@@ -78,14 +78,14 @@ void completar_tabla_tss(tss tss_libre, void* codigo_tarea, int* posicion_cr3) {
 
     tss_libre.esp      = 0x00400FF4;
     tss_libre.ebp      = 0x00401000;
-    tss_libre.eip      = (int)codigo_tarea;
+    tss_libre.eip      = 0x00400000;
     tss_libre.cr3      = (int)cr3;
-    tss_libre.es       = 0x0048;
-    tss_libre.cs       = 0x0040;
-    tss_libre.ss       = 0x0048;
-    tss_libre.ds       = 0x0048;
-    tss_libre.fs       = 0x0048;
-    tss_libre.gs       = 0x0048;
+    tss_libre.es       = 0x0058;
+    tss_libre.cs       = 0x0050;
+    tss_libre.ss       = 0x0058;
+    tss_libre.ds       = 0x0058;
+    tss_libre.fs       = 0x0058;
+    tss_libre.gs       = 0x0058;
     tss_libre.eflags   = 0x00000202;
     tss_libre.iomap    = 0xFFFF;
     tss_libre.esp0     = (int)mmu_get_pagina();

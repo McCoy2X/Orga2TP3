@@ -24,6 +24,7 @@ extern tss_inicializar
 extern tss_crear_idle
 
 extern inicializar_sched
+extern sched_pirata_manual
 
 extern GDT_DESC
 extern IDT_DESC
@@ -131,11 +132,15 @@ start:
     MOV AX, 0x68
     LTR AX
 
+    call sched_pirata_manual
+
     ; Habilitar interrupciones
     sti
+    xchg bx, bx
+    jmp 0x78:0
 
     ; Saltar a la primera tarea: Idle
-    JMP 0x70:0
+    ;JMP 0x70:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

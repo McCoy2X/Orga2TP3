@@ -23,5 +23,6 @@ uint sched_tick(uint id);
 uint sched_proxima_a_ejecutar();
 uint sched_tarea_actual();
 void sched_syscall(char desalojar);
+void sched_pirata_manual();
 
 #endif	/* !__SCHED_H__ */

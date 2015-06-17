@@ -65,6 +65,7 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
 	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
+	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
 	mmu_copiar_pagina(codigo, (int*)virtual);
 	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
 
