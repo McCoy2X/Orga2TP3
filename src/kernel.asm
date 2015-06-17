@@ -86,71 +86,31 @@ start:
 
     ; Inicializar el juego
 
+
     ; Inicializar pantalla
     CALL screen_inicializar
-    CALL screen_pintar_puntajes
-
-    CALL screen_refrescar
 
     ; Inicializar el manejador de memoria
-
+    CALL inicializar_mmu
 
     ; Inicializar el directorio de paginas
     CALL mmu_inicializar_dir_kernel
 
     ; Cargar directorio de paginas
-
-    ; Habilitar paginacion
     MOV EAX, 0x27000
     MOV CR3, EAX
 
+    ; Habilitar paginacion
     MOV EAX, CR0
     OR  EAX, 0x80000000
     MOV CR0, EAX
 
     ; Imprimir el nombre del grupo
     CALL print_group
-
-    CALL inicializar_mmu
-    ; PUSH 0x100000   ;codigo
-    ; PUSH 0x200000   ;posMapa
-    ; CALL mmu_inicializar_dir_pirata
-    ; SUB  ESP, 12
-
     ; Inicializar tss
     CALL tss_inicializar
-
     ; Inicializar tss de la tarea Idle
-    ; PUSH GS
-    ; PUSH FS
-    ; PUSH DS
-    ; PUSH SS
-    ; PUSH CS
-    ; PUSH ES
-    ; PUSH EBP
-    ; PUSH ESP
-    ; PUSHF
-    ; MOV EAX, CR3
-    ; PUSH EAX
-    ; CALL tss_crear_idle
-    ; SUB ESP, 40
-    
-    ; ;mov edi, BASE_TSS
-    ; mov edi, 0x5420
-    ; ;add edi,104
-    ; mov eax,cr3
-    ; mov [edi+28],eax
-    ; mov dword [edi+32],0x16000
-    ; mov dword [edi+36],0x46
-    ; mov dword [edi+56],0x27000
-    ; mov dword [edi+60],0x27000
-    ; mov word [edi+72],0x48
-    ; mov word [edi+76],0x40
-    ; mov word [edi+80],0x48
-    ; mov word [edi+84],0x48
-    ; mov word [edi+88],0x48
-    ; mov word [edi+92],0x48
-    ; mov word [edi+102],0xFFFF
+
 
     ; Inicializar el scheduler
 
@@ -164,12 +124,12 @@ start:
     ; Configurar controlador de interrupciones
     call resetear_pic
     call habilitar_pic
-    XOR EAX, EAX
-    MOV AX, 0x68
-    LTR AX
     sti
 
     ; Cargar tarea inicial
+    XOR EAX, EAX
+    MOV AX, 0x68
+    LTR AX
 
     ; Habilitar interrupciones
 

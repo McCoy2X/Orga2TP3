@@ -3,24 +3,27 @@
 Para la resolucion de este ejercicio modificamos \texttt{kernel.asm}, \texttt{gdt.c}, \texttt{gdt.h}, \texttt{defines.h} y \texttt{screen.c}.
 
 \subsection{a}
-Comenzamos desde \texttt{C} creando las definiciones de las tablas de descriptores en \texttt{defines.h}, como los primeros 8 indices se consideran utilizadas vamos a enumerar nustros descriptores desde 8 (Como indica el subindice a), creando los siguientes defines. \\
+Comenzamos desde \texttt{C} creando los defines de los indices de los descriptores de segmento en la gdt en \texttt{defines.h}, como los primeros 8 indices se consideran utilizados vamos a enumerar nustros descriptores desde 8 (Como indica el subindice a). \\
 \texttt{GDT\_NIVEL0\_CODIGO   8} \\
 \texttt{GDT\_NIVEL0\_DATOS    9} \\
 \texttt{GDT\_NIVEL3\_CODIGO   10} \\
 \texttt{GDT\_NIVEL3\_DATOS    11} \\
 
-Luego en el archivo \texttt{gdt.c} agregamos al array \texttt{gdt} los 4 descriptores, con su respectivo nivel (0 para los descriptores del kernel y 3 para los de usuario) y tipo, con su base en el principio de la memoria y su limite en 500MB, seteando granularity (G) y el valor de limite (\texttt{0x1F400}), marcandolo como presente y de 32 bits (D/B) y no de sistema (S).
+Luego en el archivo \texttt{gdt.c} agregamos al array \texttt{gdt} los 4 descriptores, con su respectivo nivel (0 para los descriptores del kernel y 3 para los de usuario) y tipo (\texttt{0xA} para los de codigo y \texttt{0x2} para los de datos), su base la posicionamos al principio de la memoria, con un limite de 500MB seteando granularity (\texttt{G = 1}) y el valor de limite (\texttt{0x1F400}), marcandolo como presente (\texttt{P = 1}) y de 32 bits (\texttt{D/B = 1}) y no de sistema (\texttt{S = 1}).
 
 \subsection{b}
-Para este subindice pasamos a \texttt{kernel.asm} donde habilitamos \textbf{A20} (utilizando la funcion brindada por la catedra \texttt{habilitar\_A20}) y luego cargamos la \textbf{GDT} usando \texttt{LGDT} y el puntero al descriptor \texttt{GDT\_DESC} (Estructura brindada por la catedra y definida en \texttt{gdt.h}). A continuacion activamos el bit PE (Protected Mode Enable) en \textbf{CR0} moviendo y hacemos el salto al descriptor de nivel 0 de codigo (\texttt{0x40)} en la \textbf{GDT} usando un \texttt{JMP FAR}. Una vez echo esto nos encontramos en modo protegido. \\
+Para este subindice pasamos a \texttt{kernel.asm} donde habilitamos \textbf{A20} (utilizando la funcion brindada por la catedra \texttt{habilitar\_A20}) y luego cargamos la \textbf{GDT} usando \texttt{LGDT} y un puntero al descriptor de \textbf{GDT} \texttt{GDT\_DESC} (Estructura brindada por la catedra y definida en \texttt{gdt.h}). A continuacion habilitamos la proteccion (\texttt{PE = 1}. Protected Mode Enable) en \textbf{CR0} pasandolo a \texttt{EAX} haciendo un \texttt{OR} y moviendolo nuevamente a \texttt{CR0}. Ahora para pasar a modo protegido hacemos un salto al descriptor de nivel 0 de codigo (\texttt{0x40)} en la \textbf{GDT} a travez de un \texttt{JMP FAR}. \\
 
-Ahora seteamos los selectores de segmento de datos y de stack de nivel 0, y finalizamos posicionando la pila (\texttt{EBP} y \texttt{ESP}) en \texttt{0x27000}.
+Una vez en modo protegido seteamos los selectores de segmento de datos y de stack de nivel 0, y finalizamos posicionando la pila (\texttt{EBP} y \texttt{ESP}) en \texttt{0x27000}.
 
 \subsection{c}
-Para este punto volvemos a defines.h y definimos un quinto indice para el descriptor de la memoria de la pantalla. \\
+Para este punto volvemos a \texttt{defines.h} y definimos un quinto indice para el descriptor de la memoria de la pantalla. \\
 \texttt{GDT\_PANTALLA         12} \\
 
-Y luego en \texttt{gdt.c} agregamos al array \texttt{gdt} un descriptor que comienza en \texttt{0xB8000} (Memoria de video) con un limite de 32KB, de nivel 0, sin granularidad y el resto de los bits igual que los descriptores anteriores.
+Luego en \texttt{gdt.c} agregamos al array \texttt{gdt} un descriptor que comienza en \texttt{0xB8000} (Memoria de video) con un limite de 4KB, de nivel 0, con granularidad y el resto de los bits igual que los descriptores anteriores.
 
 \subsection{d}
-Para este punto vamos a \texttt{screen.c} y completamos las funciones auxiliares \texttt{screen\_inicializar} (Limpia la pantalla y escribe los puntajes), \texttt{screen\_pintar\_rect} (Pinta un rectangulo de un color en la pantalla), \texttt{screen\_pintar\_puntajes} (Pinta los puntajes igual que la figura 3 del enunciado).
+Para este punto vamos a \texttt{screen.c} y completamos las siguientes funciones auxiliares: \\
+\texttt{screen\_inicializar}: Limpia la pantalla y luego llama a \texttt{screen\_pintar\_puntajes}. \\
+\texttt{screen\_pintar\_rect}: Pinta un rectangulo de un color en la pantalla, comienza de un punto (x, y) y tiene un tamaño relativo (width, height). \\
+\texttt{screen\_pintar\_puntajes}: Pinta los puntajes igual que la figura 3 del enunciado. \\

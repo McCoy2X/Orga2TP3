@@ -90,6 +90,23 @@ void screen_inicializar() {
     screen_pintar_puntajes();
 }
 
+void screen_pintar_puntajes() {
+    screen_pintar_rect(0, C_BG_BLACK, 0, 45, 5, 80);
+    screen_pintar_rect(0, C_BG_RED, 33, 45, 5, 7);
+    screen_pintar_rect(0, C_BG_BLUE, 40, 45, 5, 7);
+
+    print("000", 35, 47, C_BG_RED | C_FG_WHITE);
+    print("000", 42, 47, C_BG_BLUE | C_FG_WHITE);
+    
+    print("1 2 3 4 5 6 7 8", 4, 46, C_BG_BLACK | C_FG_WHITE);
+    print("X X X X X X X X", 4, 48, C_BG_BLACK | C_FG_RED);
+
+    print("1 2 3 4 5 6 7 8", 60, 46, C_BG_BLACK | C_FG_WHITE);
+    print("X X X X X X X X", 60, 48, C_BG_BLACK | C_FG_BLUE);
+
+    print("(-) -", 75, 49, C_BG_BLACK | C_FG_WHITE);
+}
+
 void screen_refrescar() {
     screen_inicializar();
     
@@ -101,8 +118,6 @@ void screen_refrescar() {
 
     print("1 2 3 4 5 6 7 8", 60, 46, C_BG_BLACK | C_FG_WHITE);
     print("X X X X X X X X", 60, 48, C_BG_BLACK | C_FG_BLUE);
-
-    print("(-) -", 75, 49, C_BG_BLACK | C_FG_WHITE);
 }
 
 void screen_pintar_rect(unsigned char c, unsigned char color, int fila, int columna, int alto, int ancho) {
@@ -122,9 +137,3 @@ void screen_pintar_rect(unsigned char c, unsigned char color, int fila, int colu
 void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int columna, int alto) {
 
 }*/
-
-void screen_pintar_puntajes() {
-    screen_pintar_rect(0, C_BG_BLACK, 0, 45, 5, 80);
-    screen_pintar_rect(0, C_BG_RED, 33, 45, 5, 7);
-    screen_pintar_rect(0, C_BG_BLUE, 40, 45, 5, 7);
-}
