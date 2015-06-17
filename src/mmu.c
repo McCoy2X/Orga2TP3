@@ -52,6 +52,7 @@ void mmu_inicializar_dir_kernel() {
 
 // Inicializar un directorio de tablas y tabla de una tarea
 int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* codigo) {
+	breakpoint();
 	int i;
 	int* dir = mmu_get_pagina();
 	int* table = mmu_get_pagina();
@@ -64,9 +65,13 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	}
 
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
+	breakpoint();
 	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
+	breakpoint();
 	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
+	breakpoint();
 	mmu_copiar_pagina(codigo, (int*)virtual);
+	breakpoint();
 	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
 
 	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
@@ -96,6 +101,7 @@ void mmu_copiar_pagina(int* original, int* copia) {
 
 // Mapea una pagina virtual, cr3, fisica
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica) {
+	breakpoint();
 	unsigned int directory_offset = virtual >> 22;
 	unsigned int table_offset = (virtual << 10) >> 22;
 

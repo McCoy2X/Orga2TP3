@@ -139,10 +139,10 @@ start:
     ; Habilitar interrupciones
     sti
     xchg bx, bx
-    ;jmp 0x78:0
+    jmp 0x78:0
 
     ; Saltar a la primera tarea: Idle
-    JMP 0x70:0
+    ;JMP 0x70:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

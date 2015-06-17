@@ -72,6 +72,7 @@ void agregar_descriptor_tss(int indice, tss* puntero) {
 }
 
 void completar_tabla_tss(tss tss_libre, void* codigo_tarea, int* posicion_cr3) {
+    breakpoint();
     int pos_mapa;
     if(((int)codigo_tarea) < 0x120000) { pos_mapa = INICIO_PIRATAA; }
     else { pos_mapa = INICIO_PIRATAB; }
