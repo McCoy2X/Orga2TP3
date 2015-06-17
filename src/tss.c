@@ -7,6 +7,7 @@
 
 #include "tss.h"
 #include "mmu.h"
+#include "i386.h"
 
 tss tss_init;
 tss tss_idle;

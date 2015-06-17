@@ -45,6 +45,7 @@ _isr%1:
 	add esp, 4
 
 	popad
+	xchg bx, bx
 	jmp 0x70:0
 	iret
 	; interrupcion_%1_msg db     'INTERRRUPCION ', %1

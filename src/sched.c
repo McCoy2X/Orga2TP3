@@ -129,13 +129,14 @@ void sched_pirata_manual() {
 	jugadorA.posicionesMapeadas[160] = 1;
 	jugadorA.posicionesMapeadas[161] = 1;
 	jugadorA.posicionesMapeadas[162] = 1;
+	breakpoint();
 
 	completar_tabla_tss(tss_jugadorA[0], (void*)0x400000, (int*)CR3_JUGADORA);
-	mmu_copiar_pagina((int*)0x10000, (int*)0x400000);
+	/*mmu_copiar_pagina((int*)0x10000, (int*)0x400000);
 
 	int* pila = (int*)0x00400FF4;
 	(*pila) = 1;
 	pila = pila + 4;
 	(*pila) = 1;
-	breakpoint();
+	breakpoint();*/
 }

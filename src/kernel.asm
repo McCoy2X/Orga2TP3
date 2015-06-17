@@ -81,6 +81,8 @@ start:
     MOV DS, AX
     MOV AX, 0x48
     MOV SS, AX
+    MOV AX, 0x48
+    MOV ES, AX
     ; Establecer la base de la pila
     MOV EBP, 0x27000
     MOV ESP, EBP
@@ -125,7 +127,7 @@ start:
 
     ; Configurar controlador de interrupciones
     call resetear_pic
-    call habilitar_pic
+    ;call habilitar_pic
 
     ; Cargar tarea inicial
     XOR EAX, EAX
@@ -137,10 +139,10 @@ start:
     ; Habilitar interrupciones
     sti
     xchg bx, bx
-    jmp 0x78:0
+    ;jmp 0x78:0
 
     ; Saltar a la primera tarea: Idle
-    ;JMP 0x70:0
+    JMP 0x70:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
