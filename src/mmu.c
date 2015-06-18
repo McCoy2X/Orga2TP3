@@ -10,7 +10,7 @@
 #include "i386.h"
 /* Atributos paginas */
 /* -------------------------------------------------------------------------- */
-
+int* mem_manager;
 
 /* Direcciones fisicas de codigos */
 /* -------------------------------------------------------------------------- */
@@ -18,32 +18,34 @@
  * copiaran al destino indicado por TASK_<i>_CODE_ADDR.
  */
 
+
 /* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
 /* -------------------------------------------------------------------------- */
 
+
 // Inicializo em manager de memoria en la posicion MEM_MANAGER, salto a la siguiente pagina
 void inicializar_mmu() {
-	int* mem_manager = (int*)MEM_MANAGER;
-	(*mem_manager) = (MEM_MANAGER + PAGE_SIZE * 2);
+	mem_manager = (int*)AREA_LIBRE;
 }
 
 // Pedir una pagina al kernel, se mueve a la siguiente pagina libre, y devuelve la pagina 
 int* mmu_get_pagina() {
-	int* mem_manager = (int*)MEM_MANAGER;
-	int* pagina = (int*)(*mem_manager);
-	(*mem_manager) = (*mem_manager) + PAGE_SIZE;
+	int* pagina = mem_manager;
+	mem_manager += PAGE_SIZE;
 	return pagina;
 }
 
 // Inicializar el descriptor de tablas y tablas del kernel para identity mapping de 0x0 a 0x3FFFFF
 void mmu_inicializar_dir_kernel() {
-	int i;
 	int* dir = (int*)DIR_PAGINAS_KERNEL;
-	int* table;
 	
-	(*dir) = (0x28003);
-	table = (int*)(DIR_PAGINAS_KERNEL + PAGE_SIZE);
+	(*dir) = 0x28003;
+	(*(dir + 1)) = 0x29003;
+	(*(dir + 2)) = 0x30003;
+	(*(dir + 3)) = 0x31003;
 
+	int* table = (int*)(0x28000);
+	int i;
 	for(i = 0; i < 1024; i++) {
 		(*table) = (i << 12) | 0x003;
 		table += 1;
@@ -52,7 +54,6 @@ void mmu_inicializar_dir_kernel() {
 
 // Inicializar un directorio de tablas y tabla de una tarea
 int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* codigo) {
-	breakpoint();
 	int i;
 	int* dir = mmu_get_pagina();
 	int* table = mmu_get_pagina();
@@ -65,13 +66,10 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	}
 
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
-	breakpoint();
 	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
-	breakpoint();
-	mmu_mapear_pagina(virtual, (unsigned int)dir, pos_mapa);
-	breakpoint();
+	mmu_mapear_pagina(0x0400000, (unsigned int)cr3, pos_mapa);
+	mmu_mapear_pagina(0x0400000, (unsigned int)dir, pos_mapa);
 	mmu_copiar_pagina(codigo, (int*)virtual);
-	breakpoint();
 	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
 
 	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
@@ -91,19 +89,18 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 void mmu_copiar_pagina(int* original, int* copia) {
 	int i;
 	
-	for(i = 0; i < 128; i++) {
+	for(i = 0; i < 1024; i++) {
 		(*copia) = (*original);
 
-		original = (int*)(original + 4);
-		copia = (int*)(copia + 4);
+		original = (int*)(original + 1);
+		copia = (int*)(copia + 1);
 	}
 }
 
 // Mapea una pagina virtual, cr3, fisica
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica) {
-	breakpoint();
-	unsigned int directory_offset = virtual >> 22;
-	unsigned int table_offset = (virtual << 10) >> 22;
+	unsigned int directory_offset = (virtual & 0xFFC00000) >> 22;
+	unsigned int table_offset = (virtual & 0x003FF000) >> 12;
 
 	int* dir = (int*)(cr3 & 0xFFFFF000);
 	dir += directory_offset;
@@ -125,8 +122,8 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 
 // Unpeaear una pagina virtual del cr3
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
-	unsigned int directory_offset = virtual >> 22;
-	unsigned int table_offset = (virtual << 10) >> 22;
+	unsigned int directory_offset = (virtual & 0xFFC00000) >> 22;
+	unsigned int table_offset = (virtual & 0x003FF000) >> 12;
 
 	int* dir = (int*)(cr3 & 0xFFFFF000);
 	dir += directory_offset;

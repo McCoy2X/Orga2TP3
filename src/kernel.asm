@@ -14,7 +14,6 @@ extern idt_inicializar
 extern print_group
 
 extern inicializar_mmu
-extern mmu_inicializar_dir_pirata
 extern mmu_inicializar_dir_kernel
 
 extern resetear_pic
@@ -63,29 +62,32 @@ start:
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
 
-    ; Ejercicio 1
     ; Habilitar A20
     CALL habilitar_A20
+
     ; Cargar la GDT
     LGDT [GDT_DESC]
+
     ; Setear el bit PE del registro CR0
-    MOV eax, cr0
+    mov eax, cr0
     or eax, 1
     mov cr0, eax
+
     ; Saltar a modo protegido
     jmp 0x40:modoprotegido
     BITS 32
     modoprotegido:
+
     ; Establecer selectores de segmentos
     MOV AX, 0x48    
     MOV DS, AX
-    MOV AX, 0x48
-    MOV SS, AX
-    MOV AX, 0x48
     MOV ES, AX
+    MOV SS, AX
+
     ; Establecer la base de la pila
     MOV EBP, 0x27000
     MOV ESP, EBP
+
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
@@ -127,7 +129,7 @@ start:
 
     ; Configurar controlador de interrupciones
     call resetear_pic
-    ;call habilitar_pic
+    call habilitar_pic
 
     ; Cargar tarea inicial
     XOR EAX, EAX
@@ -135,10 +137,10 @@ start:
     LTR AX
 
     call sched_pirata_manual
+    xchg bx, bx
 
     ; Habilitar interrupciones
     sti
-    xchg bx, bx
     jmp 0x78:0
 
     ; Saltar a la primera tarea: Idle

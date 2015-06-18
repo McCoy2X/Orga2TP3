@@ -23,10 +23,10 @@ typedef unsigned int   uint;
 /* Constantes basicas */
 /* -------------------------------------------------------------------------- */
 #define PAGE_SIZE               0x00001000
-#define DIR_PAGINAS_KERNEL  	0x027000
+#define DIR_PAGINAS_KERNEL  	0x00027000
 #define TASK_SIZE               4096
 
-#define MEM_MANAGER				0x00100000
+#define AREA_LIBRE				0x00100000
 #define TSS_IDLE_DATA			0x00100064
 #define PAGE_COPY				0x00101000
 #define MAPA 					0x00500000

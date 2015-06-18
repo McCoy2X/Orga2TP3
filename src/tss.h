@@ -60,7 +60,7 @@ extern tss tss_jugadorA[];
 extern tss tss_jugadorB[];
 
 void tss_inicializar();
-void agregar_descriptor_tss(int indice, tss* puntero);
-void completar_tabla_tss(tss tss_libre, void* codigo_tarea, int* posicion_cr3);
+void agregar_descriptor_tss(int indice, tss* puntero, unsigned int dpl);
+void completar_tabla_tss(tss* tss_libre, void* codigo_tarea, int* posicion_cr3);
 
 #endif  /* !__TSS_H__ */

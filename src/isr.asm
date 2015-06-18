@@ -37,6 +37,7 @@ extern game_syscall_pirata_posicion
 global _isr%1
 
 _isr%1:
+	xchg bx, bx
 	pushad
 	call fin_intr_pic1
 	mov eax, 1
@@ -45,7 +46,6 @@ _isr%1:
 	add esp, 4
 
 	popad
-	xchg bx, bx
 	jmp 0x70:0
 	iret
 	; interrupcion_%1_msg db     'INTERRRUPCION ', %1
