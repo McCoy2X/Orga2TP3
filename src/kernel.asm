@@ -129,7 +129,7 @@ start:
 
     ; Configurar controlador de interrupciones
     call resetear_pic
-    call habilitar_pic
+    ;call habilitar_pic
 
     ; Cargar tarea inicial
     XOR EAX, EAX
