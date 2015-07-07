@@ -27,7 +27,7 @@ typedef struct pirata_t
     uint index;
     struct jugador_t *jugador;
 
-    uint id;
+    //uint id;
     char enJuego;
     char esPirata;
     uint posX;

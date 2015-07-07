@@ -29,7 +29,7 @@ uint sched_proxima_a_ejecutar() {
     		// NO HAY PIRATAS
     		return 14;
     	} else {
-        	return 14 + jugadorA.proxPirata;
+        	return 15 + jugadorA.proxPirata;
         }
     } else if(dSched.proxJugador == 'B') {
     	if(jugadorB.proxPirata == 8) {
@@ -92,7 +92,7 @@ uint sched_tick(uint id) {
 	    	}
 	   	}
 
-	   	jugadorB.proxPirata = nPirata;
+	   	jugadorA.proxPirata = nPirata;
     }
 
 	dSched.tareaActual = nuevoId;
@@ -120,6 +120,9 @@ void sched_syscall(char desalojar) {
 void sched_pirata_manual() {
 	dSched.proxJugador = 'B';
 	dSched.tareaActual = 15;
+
+    jugadorA.piratasEnJuego = 1;
+    jugadorA.proxPirata = 0;
 	jugadorA.posicionesMapeadas[0] = 1;
 	jugadorA.posicionesMapeadas[1] = 1;
 	jugadorA.posicionesMapeadas[2] = 1;
@@ -129,7 +132,12 @@ void sched_pirata_manual() {
 	jugadorA.posicionesMapeadas[160] = 1;
 	jugadorA.posicionesMapeadas[161] = 1;
 	jugadorA.posicionesMapeadas[162] = 1;
-	
+
+    jugadorA.piratas[0].enJuego = TRUE;
+    jugadorA.piratas[0].esPirata = TRUE;
+    jugadorA.piratas[0].posX = 1;
+    jugadorA.piratas[0].posY = 1;
+
 	completar_tabla_tss(&tss_jugadorA[0], (void*)0x10000, (int*)CR3_JUGADORA);
 	mmu_copiar_pagina((int*)0x10000, (int*)0x0400000);
 

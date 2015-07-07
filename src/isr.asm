@@ -150,6 +150,8 @@ _isr33:
 
 global _isr70
 _isr70:
+	xchg bx, bx
+
 	pushad
 	mov ebx, eax ; Codigo del syscall
 	mov esi, ecx ; Parametro secundario
@@ -192,7 +194,7 @@ _isr70:
 
 	.fin:
 	popad
-	jmp 0x70:0
+	;jmp 0x70:0
 	iret
 
 	.fineax:
@@ -204,5 +206,5 @@ _isr70:
 	pop edx
 	pop ecx
 	add esp, 4
-	jmp 0x70:0
+	;jmp 0x70:0
 	iret

@@ -65,6 +65,10 @@ void idt_inicializar() {
 
     IDT_ENTRY(32);
     IDT_ENTRY(33);
-    IDT_ENTRY(70);
+
+    idt[70].offset_0_15 = (unsigned short) ((unsigned int)(&_isr70) & (unsigned int) 0xFFFF);        
+    idt[70].segsel = (unsigned short) 0x40;                                                                  
+    idt[70].attr = (unsigned short) 0xEE00;                                                                  
+    idt[70].offset_16_31 = (unsigned short) ((unsigned int)(&_isr70) >> 16 & (unsigned int) 0xFFFF);
 
 }

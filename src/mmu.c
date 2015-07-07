@@ -58,10 +58,10 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	int* dir = mmu_get_pagina();
 	int* table = mmu_get_pagina();
 
-	(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
+	(*dir) = (((int)table) & 0xFFFFF000) | 0x007;
 
 	for(i = 0; i < 1024; i++) {
-		(*table) = (i << 12) | 0x003;
+		(*table) = (i << 12) | 0x007;
 		table += 1;
 	}
 
@@ -150,6 +150,7 @@ void mmu_mapear_pirata_V(char jugador, int posX, int posY) {
 
 		if((*j).piratas[i].enJuego == TRUE) {
 			if(posX >= 0) {
+				breakpoint();
 		        mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + posX * PAGE_SIZE);
 		    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
 		    }

@@ -198,6 +198,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         } else if(dir == 10) {
             if(posX != MAPA_ANCHO - 1) {
                 if(posX != MAPA_ANCHO - 2) {
+                    //breakpoint();
                     mmu_mapear_pirata_V(nombreJugador, ((int)posX) + 1, ((int)posY) - 1);
                 }
 
