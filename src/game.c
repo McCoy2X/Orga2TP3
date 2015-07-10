@@ -202,6 +202,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     mmu_mapear_pirata_V(nombreJugador, ((int)posX) + 1, ((int)posY) - 1);
                 }
 
+                breakpoint();
                 mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
 
                 if(nombreJugador == 'A') {

@@ -149,17 +149,21 @@ void mmu_mapear_pirata_V(char jugador, int posX, int posY) {
 		int cr3 = *(cr3s + 4 * i);
 
 		if((*j).piratas[i].enJuego == TRUE) {
-			if(posX >= 0) {
-				breakpoint();
-		        mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + posX * PAGE_SIZE);
-		    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
-		    }
-		    mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + (posX + 1) * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + (posX + 1) * PAGE_SIZE);
-		    (*j).posicionesMapeadas[posY * MAPA_ANCHO + posX + 1] = 1;
-		    if(posX + 2 < 79) {
-		    	mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + (posX + 2) * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + (posX + 2) * PAGE_SIZE);
-		    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX + 2] = 1;
-		    }
+			if(posX <= 78) {
+				if(posY >= 0) {
+			        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
+			    }
+
+			    breakpoint();
+			    mmu_mapear_pagina(MAPA + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			    (*j).posicionesMapeadas[posY * MAPA_ANCHO + posX + 1] = 1;
+			    if(posY + 2 <= 79) {
+
+			    	mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX + 2] = 1;
+			    }
+			}
 		}
 	}
 }
@@ -181,7 +185,7 @@ void mmu_mapear_pirata_H(char jugador, int posX, int posY) {
 		int cr3 = *(cr3s + 4 * i);
 
 		if((*j).piratas[i].enJuego == TRUE) {
-			if(posX >= 0) {
+			if(posY >= 0) {
 		        mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + posX * PAGE_SIZE);
 		    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
 		    }
