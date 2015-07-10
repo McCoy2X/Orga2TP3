@@ -60,7 +60,7 @@ void agregar_descriptor_tss(int indice, tss* puntero, unsigned int dpl) {
         (unsigned char)     (unsigned int)puntero >> 16,  /* base[23:16]  */
         (unsigned char)     0x09,           /* type         */
         (unsigned char)     0x00,           /* s            */
-        (unsigned char)     dpl,           /* dpl          */
+        (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x00,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
@@ -82,14 +82,14 @@ void completar_tabla_tss(tss* tss_libre, void* codigo_tarea, int* posicion_cr3) 
     (*tss_libre).ebp      = 0x00401000;
     (*tss_libre).eip      = 0x00400000;
     (*tss_libre).cr3      = (int)cr3;
-    (*tss_libre).es       = 0x0058;
-    (*tss_libre).cs       = 0x0050;
-    (*tss_libre).ss       = 0x0058;
-    (*tss_libre).ds       = 0x0058;
-    (*tss_libre).fs       = 0x0058;
-    (*tss_libre).gs       = 0x0058;
+    (*tss_libre).es       = 0x0058 | 0x03;
+    (*tss_libre).cs       = 0x0050 | 0x03;
+    (*tss_libre).ss       = 0x0058 | 0x03;
+    (*tss_libre).ds       = 0x0058 | 0x03;
+    (*tss_libre).fs       = 0x0058 | 0x03;
+    (*tss_libre).gs       = 0x0058 | 0x03;
     (*tss_libre).eflags   = 0x00000202;
     (*tss_libre).iomap    = 0xFFFF;
-    (*tss_libre).esp0     = (int)mmu_get_pagina();
+    (*tss_libre).esp0     = (int)mmu_get_pagina() + 0x1000;
     (*tss_libre).ss0      = 0x0048;
 }

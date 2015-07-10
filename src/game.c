@@ -229,6 +229,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         }
     }
 
+    //screen_refrescar();
     return 0;
 }
 

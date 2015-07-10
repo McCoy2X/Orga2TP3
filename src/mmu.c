@@ -6,6 +6,7 @@
 */
 
 #include "game.h"
+#include "screen.h"
 #include "mmu.h"
 #include "i386.h"
 /* Atributos paginas */
@@ -25,7 +26,7 @@ int* mem_manager;
 
 // Inicializo em manager de memoria en la posicion MEM_MANAGER, salto a la siguiente pagina
 void inicializar_mmu() {
-	mem_manager = (int*)AREA_LIBRE;
+	mem_manager = (int*)AREA_LIBRE + PAGE_SIZE;
 }
 
 // Pedir una pagina al kernel, se mueve a la siguiente pagina libre, y devuelve la pagina 
@@ -58,10 +59,10 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	int* dir = mmu_get_pagina();
 	int* table = mmu_get_pagina();
 
-	(*dir) = (((int)table) & 0xFFFFF000) | 0x007;
+	(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
 
 	for(i = 0; i < 1024; i++) {
-		(*table) = (i << 12) | 0x007;
+		(*table) = (i << 12) | 0x003;
 		table += 1;
 	}
 
@@ -71,6 +72,16 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	mmu_mapear_pagina(0x0400000, (unsigned int)dir, pos_mapa);
 	mmu_copiar_pagina(codigo, (int*)virtual);
 	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
+
+	print(" ", 0, 0, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 1, 0, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 2, 0, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 0, 1, C_BG_GREEN | C_FG_BLACK);
+	print("M", 1, 1, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 2, 1, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 0, 2, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 1, 2, C_BG_GREEN | C_FG_BLACK);
+	print(" ", 2, 2, C_BG_GREEN | C_FG_BLACK);
 
 	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
 	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE);
@@ -110,13 +121,13 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 		table = (int*)((*dir) & 0xFFFFF000);
 		table += table_offset;
 
-		(*table) = (fisica & 0xFFFFF000) | 0x003;
+		(*table) = (fisica & 0xFFFFF000) | 0x007;
 	} else {
 		table = mmu_get_pagina();
-		(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
+		(*dir) = (((int)table) & 0xFFFFF000) | 0x007;
 
 		table += table_offset;
-		(*table) = (fisica & 0xFFFFF000) | 0x003;
+		(*table) = (fisica & 0xFFFFF000) | 0x007;
 	}
 }
 
@@ -151,17 +162,19 @@ void mmu_mapear_pirata_V(char jugador, int posX, int posY) {
 		if((*j).piratas[i].enJuego == TRUE) {
 			if(posX <= 78) {
 				if(posY >= 0) {
-			        mmu_mapear_pagina(MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-			    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
+			        mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			    	print(" ", posX, posY, C_BG_GREEN | C_FG_BLACK);
+			    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)] = 1;
 			    }
 
-			    breakpoint();
-			    mmu_mapear_pagina(MAPA + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-			    (*j).posicionesMapeadas[posY * MAPA_ANCHO + posX + 1] = 1;
+			    mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			    print("M", posX - 1, posY + 1, C_BG_GREEN | C_FG_BLACK);
+			    print("M", posX, posY + 1, C_BG_RED | C_FG_BLACK);
+			    (*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + (posX + 1)] = 1;
 			    if(posY + 2 <= 79) {
-
-			    	mmu_mapear_pagina(MAPA + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
-			    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX + 2] = 1;
+			    	mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA + ((posY + 2) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			    	print(" ", posX, posY + 2, C_BG_GREEN | C_FG_BLACK);
+			    	(*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + (posX + 1)] = 1;
 			    }
 			}
 		}
@@ -169,6 +182,7 @@ void mmu_mapear_pirata_V(char jugador, int posX, int posY) {
 }
 
 void mmu_mapear_pirata_H(char jugador, int posX, int posY) {
+	breakpoint();
 	int i;
 	jugador_t* j;
 	int* cr3s;
@@ -185,16 +199,22 @@ void mmu_mapear_pirata_H(char jugador, int posX, int posY) {
 		int cr3 = *(cr3s + 4 * i);
 
 		if((*j).piratas[i].enJuego == TRUE) {
-			if(posY >= 0) {
-		        mmu_mapear_pagina(MAPA + posY * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + posY * MAPA_ANCHO + posX * PAGE_SIZE);
-		    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
-		    }
-		    mmu_mapear_pagina(MAPA + (posY + 1) * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY + 1) * MAPA_ANCHO + posX * PAGE_SIZE);
-		    (*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] = 1;
-		    if(posY + 2 < 79) {
-		    	mmu_mapear_pagina(MAPA + (posY + 2) * MAPA_ANCHO + posX * PAGE_SIZE, cr3, MAPA_VIRTUAL + (posY + 2) * MAPA_ANCHO + posX * PAGE_SIZE);
-				(*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX] = 1;
-		    }
+			if(posX >= 0) {
+				breakpoint();
+			    mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+			   	print(" ", posX, posY + 1, C_BG_GREEN | C_FG_BLACK);
+			    (*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] = 1;
+			}
+			
+			mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			print("M", posX + 1, posY, C_BG_GREEN | C_FG_BLACK);
+			print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
+			(*j).posicionesMapeadas[(posY - 1) * MAPA_ANCHO + (posX + 1)] = 1;
+			if(posX + 2 < 43) {
+			   	mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+				print(" ", posX + 2, posY + 1, C_BG_GREEN | C_FG_BLACK);
+				(*j).posicionesMapeadas[(posY - 1) * MAPA_ANCHO + (posX + 2)] = 1;
+			}
 		}
 	}
 }
