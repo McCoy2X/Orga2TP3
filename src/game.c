@@ -341,7 +341,7 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
     if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)] == 1) {
         if(game_valor_tesoro(posX + 1, posY) != 0) {
             for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
-                if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                if((*j).botines[i][1] == (posX + 1) && (*j).botines[i][2] == posY) {
                     break;
                 }
 
@@ -360,7 +360,7 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
         if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 2)] == 1) {
             if(game_valor_tesoro(posX + 2, posY) != 0) {
                 for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
-                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                    if((*j).botines[i][1] == (posX + 2) && (*j).botines[i][2] == posY) {
                         break;
                     }
 
@@ -414,7 +414,7 @@ void game_pirata_check_botines_V(char jugador, int posX, int posY) {
     if((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] == 1) {
         if(game_valor_tesoro(posX, posY + 1) != 0) {
             for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
-                if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                if((*j).botines[i][1] == posX && (*j).botines[i][2] == (posY + 1)) {
                     break;
                 }
             }
@@ -433,7 +433,7 @@ void game_pirata_check_botines_V(char jugador, int posX, int posY) {
         if((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX == 1]) {
             if(game_valor_tesoro(posX, posY + 2) != 0) {
                 for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
-                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == (posY + 1)) {
                         break;
                     }
                 }

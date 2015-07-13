@@ -249,7 +249,7 @@ void sched_pendiente() {
                 (*posY) = (*jugador).botines[i][2];
 
                 posX = (int*)(0x14000 - 8);
-                posY = (int*)(0x12000 - 4);
+                posY = (int*)(0x14000 - 4);
 
                 (*posX) = (*jugador).botines[i][1];
                 (*posY) = (*jugador).botines[i][2];
