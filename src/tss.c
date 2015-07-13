@@ -76,11 +76,11 @@ void completar_tabla_tss(tss* tss_libre, void* codigo_tarea, int* posicion_cr3) 
     int* cr3;
     if(((int)codigo_tarea) < 0x12000) { pos_mapa = INICIO_PIRATAA; }
     else { pos_mapa = INICIO_PIRATAB; }
-    if(((int)codigo_tarea) == 0x11000 || ((int)codigo_tarea) == 0x13000) {
-       cr3 = mmu_inicializar_dir_pirata_M(pos_mapa, 0x27000, codigo_tarea);
-    } else {
+    //if(((int)codigo_tarea) == 0x11000 || ((int)codigo_tarea) == 0x13000) {
+    //   cr3 = mmu_inicializar_dir_pirata_M(pos_mapa, 0x27000, codigo_tarea);
+    //} else {
        cr3 = mmu_inicializar_dir_pirata(pos_mapa, 0x27000, codigo_tarea);
-    }
+    //}
     (*posicion_cr3) = (int)cr3;
 
     (*tss_libre).esp      = 0x00400FF4;

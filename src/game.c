@@ -24,7 +24,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #define BOTINES_CANTIDAD 8
 
 uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
-                                        {10,  0, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
+                                        {10,  2, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
                                         {49,  3, 50}, {49, 38, 50}, {64, 21, 100}, {34, 21, 100}
                                     };
 
@@ -157,6 +157,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
     char nombreJugador;
     uint idJugador;
     unsigned short color;
+    int cr3;
     jugador_t* j;
 
     if(id > 14 && id < 23) {
@@ -166,6 +167,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         idJugador = 15;
         color = C_BG_GREEN | C_FG_BLACK;
         j = &jugadorA;
+        cr3 = *((int*)(CR3_JUGADORA + 4 * (id - idJugador)));
     } else if(id >= 23 && id < 31) {
         posY = (jugadorB.piratas[id - 23]).posY;
         posX = (jugadorB.piratas[id - 23]).posX;
@@ -173,6 +175,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
         idJugador = 23;
         color = C_BG_BLUE | C_FG_BLACK;
         j = &jugadorB;
+        cr3 = *((int*)(CR3_JUGADORB + 4 * (id - idJugador)));
     }
 
     if(id > 14 && id < 31) {
@@ -186,6 +189,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
 
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX, posY, C_BG_RED | C_FG_BLACK);
@@ -200,6 +204,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
 
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX, posY + 2, C_BG_RED | C_FG_BLACK);
@@ -215,6 +220,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 
                     //breakpoint();
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -229,6 +235,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
 
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -242,6 +249,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posY != 0) {
                     if(((*j).posicionesMapeadas[(posY - 1) * MAPA_ANCHO + posX]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX, posY, C_BG_RED | C_FG_BLACK);
@@ -254,6 +262,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posY != MAPA_ALTO - 1) {
                     if(((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX, posY + 2, C_BG_RED | C_FG_BLACK);
@@ -266,6 +275,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posX != MAPA_ANCHO - 1) {
                     if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -278,6 +288,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posX != 0) {
                     if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX - 1)]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -328,7 +339,7 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
     }
 
     if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)] == 1) {
-        if(game_valor_tesoro(posX, posY) != 0) {
+        if(game_valor_tesoro(posX + 1, posY) != 0) {
             for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
                 if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
                     break;
@@ -347,7 +358,7 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
 
     if(posX + 2 <= 79) {
         if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 2)] == 1) {
-            if(game_valor_tesoro(posX, posY) != 0) {
+            if(game_valor_tesoro(posX + 2, posY) != 0) {
                 for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
                     if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
                         break;
@@ -401,7 +412,7 @@ void game_pirata_check_botines_V(char jugador, int posX, int posY) {
     }
 
     if((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] == 1) {
-        if(game_valor_tesoro(posX, posY) != 0) {
+        if(game_valor_tesoro(posX, posY + 1) != 0) {
             for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
                 if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
                     break;
@@ -420,7 +431,7 @@ void game_pirata_check_botines_V(char jugador, int posX, int posY) {
 
     if(posX + 2 <= 79) {
         if((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX == 1]) {
-            if(game_valor_tesoro(posX, posY) != 0) {
+            if(game_valor_tesoro(posX, posY + 2) != 0) {
                 for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
                     if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
                         break;
@@ -481,15 +492,15 @@ uint game_syscall_pirata_posicion(uint id, int idx)
 {
     if(idx == -1) {
         if(id > 14 && id < 23) {
-            return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posX;
+            return ((jugadorA.piratas[id - 15]).posY << 8) | (jugadorA.piratas[id - 15]).posX;
         } else {
-            return (jugadorB.piratas[id - 23]).posY << 8 | (jugadorB.piratas[id - 23]).posX;
+            return ((jugadorB.piratas[id - 23]).posY << 8) | (jugadorB.piratas[id - 23]).posX;
         }
     } else {
         if(id >= 23 && id < 31) {
-            return (jugadorA.piratas[(uint)idx - 15]).posY << 8 | (jugadorA.piratas[(uint)idx - 15]).posX;
+            return ((jugadorA.piratas[(uint)idx - 15]).posY << 8) | (jugadorA.piratas[(uint)idx - 15]).posX;
         } else {
-            return (jugadorB.piratas[(uint)idx - 23]).posY << 8 | (jugadorB.piratas[(uint)idx - 23]).posX;
+            return ((jugadorB.piratas[(uint)idx - 23]).posY << 8) | (jugadorB.piratas[(uint)idx - 23]).posX;
         }
     }
     // ~ completar ~

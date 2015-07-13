@@ -10,11 +10,12 @@
 #include "syscall.h"
 #include "i386.h"
 
-void task(int x_target, int y_target) { breakpoint();
+void task(int x_target, int y_target) {
     /* Tarea */
-
+    
     //breakpoint();
     uint pos = syscall_posicion(-1);
+    breakpoint();
     int x = pos & 0xFF;
     int y = pos >> 8;
     //breakpoint();
@@ -26,6 +27,8 @@ void task(int x_target, int y_target) { breakpoint();
         syscall_mover(ABA);
 
     while(1) {syscall_cavar();}
+
+    //while(1){ syscall_mover(DER);}
 
   while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }
 }

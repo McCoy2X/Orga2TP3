@@ -193,7 +193,7 @@ _isr70:
 		push esi
 		push eax
 		call game_syscall_pirata_posicion
-		add esp, 12
+		add esp, 8
 		jmp .fineax
 
 	.fin:
@@ -210,5 +210,8 @@ _isr70:
 	pop edx
 	pop ecx
 	add esp, 4
+	push eax
 	jmp 0x70:0
+	xchg bx, bx
+	pop eax
 	iret
