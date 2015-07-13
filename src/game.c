@@ -8,6 +8,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #include "mmu.h"
 #include "tss.h"
 #include "screen.h"
+#include "sched.h"
 
 #include <stdarg.h>
 
@@ -23,7 +24,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #define BOTINES_CANTIDAD 8
 
 uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
-                                        {30,  3, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
+                                        {10,  0, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
                                         {49,  3, 50}, {49, 38, 50}, {64, 21, 100}, {34, 21, 100}
                                     };
 
@@ -154,83 +155,293 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
     uint posY;
     uint posX;
     char nombreJugador;
+    uint idJugador;
+    unsigned short color;
+    jugador_t* j;
 
     if(id > 14 && id < 23) {
         posY = (jugadorA.piratas[id - 15]).posY;
         posX = (jugadorA.piratas[id - 15]).posX;
         nombreJugador = 'A';
+        idJugador = 15;
+        color = C_BG_GREEN | C_FG_BLACK;
+        j = &jugadorA;
     } else if(id >= 23 && id < 31) {
         posY = (jugadorB.piratas[id - 23]).posY;
         posX = (jugadorB.piratas[id - 23]).posX;
         nombreJugador = 'B';
+        idJugador = 23;
+        color = C_BG_BLUE | C_FG_BLACK;
+        j = &jugadorB;
     }
 
     if(id > 14 && id < 31) {
+        if(((*j).piratas[id - idJugador]).esPirata == TRUE) {
 
-        if(dir == 4) {
-            if(posY != 0) {
-                if(posY != 1) {
-                    mmu_mapear_pirata_H(nombreJugador, ((int)posX) - 1, ((int)posY) - 1);
+            if(dir == 4) {
+                if(posY != 0) {
+                    if(posY != 1) {
+                        mmu_mapear_pirata_H(id - idJugador, nombreJugador, ((int)posX) - 1, ((int)posY) - 2);
+                        game_pirata_check_botines_H(nombreJugador, ((int)posX) - 1, ((int)posY) - 2);
+                    }
+
+                    mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+
+                    print("E", posX, posY + 1, color);
+                    print("E", posX, posY, C_BG_RED | C_FG_BLACK);
+                    ((*j).piratas[id - idJugador]).posY = posY - 1;
+
                 }
+            } else if(dir == 7) {
+                if(posY != MAPA_ALTO - 1) {
+                    if(posY != MAPA_ALTO - 2) {
+                        mmu_mapear_pirata_H(id - idJugador, nombreJugador, ((int)posX) - 1, ((int)posY) + 2);
+                        game_pirata_check_botines_H(nombreJugador, ((int)posX) - 1, ((int)posY) + 2);
+                    }
 
-                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+                    mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
 
-                if(nombreJugador == 'A') {
-                    (jugadorA.piratas[id - 15]).posY = posY - 1;
-                } else {
-                    (jugadorB.piratas[id - 23]).posY = posY - 1;
+                    print("E", posX, posY + 1, color);
+                    print("E", posX, posY + 2, C_BG_RED | C_FG_BLACK);
+                    ((*j).piratas[id - idJugador]).posY = posY + 1;
+
                 }
-            }
-        } else if(dir == 7) {
-            if(posY != MAPA_ALTO - 1) {
-                if(posY != MAPA_ALTO - 2) {
-                    mmu_mapear_pirata_H(nombreJugador, ((int)posX) - 1, ((int)posY) + 1);
-                }
+            } else if(dir == 10) {
+                if(posX != MAPA_ANCHO - 1) {
+                    if(posX != MAPA_ANCHO - 2) {
+                        breakpoint();
+                        mmu_mapear_pirata_V(id - idJugador, nombreJugador, ((int)posX) + 2, ((int)posY) - 1);
+                        game_pirata_check_botines_V(nombreJugador, ((int)posX) + 2, ((int)posY) - 1);
+                    }
 
-                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
-
-                if(nombreJugador == 'A') {
-                    (jugadorA.piratas[id - 15]).posY = posY + 1;
-                } else {
-                    (jugadorB.piratas[id - 23]).posY = posY + 1;
-                }
-            }
-        } else if(dir == 10) {
-            if(posX != MAPA_ANCHO - 1) {
-                if(posX != MAPA_ANCHO - 2) {
                     //breakpoint();
-                    mmu_mapear_pirata_V(nombreJugador, ((int)posX) + 1, ((int)posY) - 1);
+                    mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
+
+                    print("E", posX, posY + 1, color);
+                    print("E", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
+                    ((*j).piratas[id - idJugador]).posX = posX + 1;
+
                 }
+            } else if(dir == 13) {
+                if(posX != 0) {
+                    if(posX != 1) {
+                        mmu_mapear_pirata_V(id - idJugador, nombreJugador, ((int)posX) - 2, ((int)posY) - 1);
+                        game_pirata_check_botines_V(nombreJugador, ((int)posX) - 2, ((int)posY) - 1);
+                    }
 
-                breakpoint();
-                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
+                    mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
 
-                if(nombreJugador == 'A') {
-                    (jugadorA.piratas[id - 15]).posX = posX + 1;
-                } else {
-                    (jugadorB.piratas[id - 23]).posX = posX + 1;
-                }
-            }
+                    print("E", posX, posY + 1, color);
+                    print("E", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
+                    ((*j).piratas[id - idJugador]).posX = posX - 1;
 
-        } else if(dir == 13) {
-            if(posX != 0) {
-                if(posX != 1) {
-                    mmu_mapear_pirata_V(nombreJugador, ((int)posX) - 1, ((int)posY) - 1);
-                }
-
-                mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
-
-                if(nombreJugador == 'A') {
-                    (jugadorA.piratas[id - 15]).posX = posX - 1;
-                } else {
-                    (jugadorB.piratas[id - 23]).posX = posX - 1;
                 }
             }
+        } else {
+
+            if(dir == 4) {
+                if(posY != 0) {
+                    if(((*j).posicionesMapeadas[(posY - 1) * MAPA_ANCHO + posX]) == 1) {
+                        mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+
+                        print("M", posX, posY + 1, color);
+                        print("M", posX, posY, C_BG_RED | C_FG_BLACK);
+                        ((*j).piratas[id - idJugador]).posY = posY - 1;
+                    } else {
+                        sched_syscall(1); // Lo desalojo
+                    }
+                }
+            } else if(dir == 7) {
+                if(posY != MAPA_ALTO - 1) {
+                    if(((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX]) == 1) {
+                        mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
+
+                        print("M", posX, posY + 1, color);
+                        print("M", posX, posY + 2, C_BG_RED | C_FG_BLACK);
+                        ((*j).piratas[id - idJugador]).posY = posY + 1;
+                    } else {
+                        sched_syscall(1);
+                    }
+                }
+            } else if(dir == 10) {
+                if(posX != MAPA_ANCHO - 1) {
+                    if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)]) == 1) {
+                        mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
+
+                        print("M", posX, posY + 1, color);
+                        print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
+                        ((*j).piratas[id - idJugador]).posX = posX + 1;
+                    } else {
+                        sched_syscall(1);
+                    }
+                }
+            } else if(dir == 13) {
+                if(posX != 0) {
+                    if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX - 1)]) == 1) {
+                        mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
+
+                        print("M", posX, posY + 1, color);
+                        print("M", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
+                        ((*j).piratas[id - idJugador]).posX = posX - 1;
+                    } else {
+                        sched_syscall(1);
+                    }
+                }
+            }            
         }
     }
 
     //screen_refrescar();
     return 0;
+}
+
+void game_pirata_check_botines_H(char jugador, int posX, int posY) {
+    jugador_t* j;
+    int i;
+    unsigned short color;
+
+    if(jugador == 'A') {
+        j = &jugadorA;
+        color = C_BG_GREEN | C_FG_BLACK;
+    } else {
+        j = &jugadorB;
+        color = C_BG_BLUE | C_FG_BLACK;
+    }
+
+    if(posX >= 0) {
+        if((*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] == 1) {
+            if(game_valor_tesoro(posX, posY) != 0) {
+                for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
+                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                        break;
+                    }
+
+                    if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                        print("o", posX, posY + 1, color);
+                        (*j).botines[i][0] = 1;
+                        (*j).botines[i][1] = posX;
+                        (*j).botines[i][2] = posY;
+                        (*j).botinesDescubiertos++;
+                    }
+                }
+            }
+        }
+    }
+
+    if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)] == 1) {
+        if(game_valor_tesoro(posX, posY) != 0) {
+            for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
+                if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                    break;
+                }
+
+                if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                    print("o", posX + 1, posY + 1, color);
+                    (*j).botines[i][0] = 1;
+                    (*j).botines[i][1] = posX + 1;
+                    (*j).botines[i][2] = posY;
+                    (*j).botinesDescubiertos++;
+                }
+            }
+        }
+    }
+
+    if(posX + 2 <= 79) {
+        if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 2)] == 1) {
+            if(game_valor_tesoro(posX, posY) != 0) {
+                for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
+                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                        break;
+                    }
+
+                    if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                        print("o", posX + 2, posY +1 , color);
+                        (*j).botines[i][0] = 1;
+                        (*j).botines[i][1] = posX + 2;
+                        (*j).botines[i][2] = posY;
+                        (*j).botinesDescubiertos++;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void game_pirata_check_botines_V(char jugador, int posX, int posY) {
+    jugador_t* j;
+    int i;
+    unsigned short color;
+
+    if(jugador == 'A') {
+        j = &jugadorA;
+        color = C_BG_GREEN | C_FG_BLACK;
+    } else {
+        j = &jugadorB;
+        color = C_BG_BLUE | C_FG_BLACK;
+    }
+
+    if(posX >= 0) {
+        if((*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] == 1) {
+            if(game_valor_tesoro(posX, posY) != 0) {
+                for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
+                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                        break;
+                    }
+                }
+
+                if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                    //breakpoint();
+                    print("o", posX, posY + 1, color);
+                    (*j).botines[i][0] = 1;
+                    (*j).botines[i][1] = posX;
+                    (*j).botines[i][2] = posY;
+                    (*j).botinesDescubiertos++;
+                }
+            }
+        }
+    }
+
+    if((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] == 1) {
+        if(game_valor_tesoro(posX, posY) != 0) {
+            for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
+                if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                    break;
+                }
+            }
+
+            if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                print("o", posX, posY + 2, color);
+                (*j).botines[i][0] = 1;
+                (*j).botines[i][1] = posX;
+                (*j).botines[i][2] = posY + 1;
+                (*j).botinesDescubiertos++;
+            }
+        }
+    }
+
+    if(posX + 2 <= 79) {
+        if((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX == 1]) {
+            if(game_valor_tesoro(posX, posY) != 0) {
+                for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
+                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
+                        break;
+                    }
+                }
+                
+                if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                    print("o", posX, posY + 3, color);
+                    (*j).botines[i][0] = 1;
+                    (*j).botines[i][1] = posX;
+                    (*j).botines[i][2] = posY + 2;
+                    (*j).botinesDescubiertos++;
+                }
+            }
+        }
+    }
+}
+
+void game_pirata_minero() {
+
 }
 
 uint game_syscall_pirata_cavar(uint id) {
@@ -273,13 +484,13 @@ uint game_syscall_pirata_posicion(uint id, int idx)
         if(id > 14 && id < 23) {
             return (jugadorA.piratas[id - 15]).posY << 8 | (jugadorA.piratas[id - 15]).posX;
         } else {
-            return (jugadorB.piratas[id - 24]).posY << 8 | (jugadorB.piratas[id - 24]).posX;
+            return (jugadorB.piratas[id - 23]).posY << 8 | (jugadorB.piratas[id - 23]).posX;
         }
     } else {
         if(id >= 23 && id < 31) {
             return (jugadorA.piratas[(uint)idx - 15]).posY << 8 | (jugadorA.piratas[(uint)idx - 15]).posX;
         } else {
-            return (jugadorB.piratas[(uint)idx - 24]).posY << 8 | (jugadorB.piratas[(uint)idx - 24]).posX;
+            return (jugadorB.piratas[(uint)idx - 23]).posY << 8 | (jugadorB.piratas[(uint)idx - 23]).posX;
         }
     }
     // ~ completar ~

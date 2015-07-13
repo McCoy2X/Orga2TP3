@@ -127,24 +127,25 @@ start:
     ; Cargar IDT
     lidt [IDT_DESC]
 
-    ; Configurar controlador de interrupciones
-    call resetear_pic
-    ;call habilitar_pic
-
     ; Cargar tarea inicial
     XOR EAX, EAX
     MOV AX, 0x68
     LTR AX
 
     call sched_pirata_manual
+
+    ; Configurar controlador de interrupciones
+    call resetear_pic
+    call habilitar_pic
+    
     xchg bx, bx
 
     ; Habilitar interrupciones
     sti
-    jmp 0x78:0
+    ;jmp 0x78:0
 
     ; Saltar a la primera tarea: Idle
-    ;JMP 0x70:0
+    JMP 0x70:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

@@ -19,6 +19,7 @@ extern sched_tick
 extern sched_tarea_actual
 extern sched_proxima_a_ejecutar
 extern sched_syscall
+extern sched_pendiente
 
 ;; Screen
 extern screen_actualizar_reloj_global
@@ -94,17 +95,21 @@ _isr32:
 	; GUARDO REGISTROS ANTES DE LLAMAR A LA FUNCION DE C
 	pushad
 
+	;xchg bx, bx
+
 	call fin_intr_pic1
 	call sched_proxima_a_ejecutar
 	push eax
 	;call screen_actualizar_reloj_global
 	call sched_tick
+	mov ebx, eax
+	call sched_pendiente
 	xor ecx, ecx
 	str cx
-	cmp ax, cx
+	cmp bx, cx
 	je .fin
 
-	mov [sched_tarea_selector], ax
+	mov [sched_tarea_selector], bx
 	jmp far [sched_tarea_offset]
 
 	.fin:
@@ -150,7 +155,6 @@ _isr33:
 
 global _isr70
 _isr70:
-	xchg bx, bx
 
 	pushad
 	mov ebx, eax ; Codigo del syscall
@@ -194,7 +198,7 @@ _isr70:
 
 	.fin:
 	popad
-	;jmp 0x70:0
+	jmp 0x70:0
 	iret
 
 	.fineax:
@@ -206,5 +210,5 @@ _isr70:
 	pop edx
 	pop ecx
 	add esp, 4
-	;jmp 0x70:0
+	jmp 0x70:0
 	iret

@@ -19,6 +19,7 @@ typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD} direccion
 #define MAPA_ANCHO                       80
 #define MAPA_ALTO                        44
 
+#define BOTINES_CANTIDAD 8
 
 struct jugador_t;
 
@@ -46,6 +47,8 @@ typedef struct jugador_t
     uint piratasEnJuego;
     uint proxPirata;
     char posicionesMapeadas[3520]; // 80 x 44 posiciones
+    uint botines[BOTINES_CANTIDAD][3]; // Tuplas de: Tesoro pendiente, posX, posY
+    uint botinesDescubiertos;
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 
@@ -74,6 +77,8 @@ pirata_t* game_pirata_en_posicion(uint x, uint y);
 
 uint game_syscall_pirata_posicion(uint id, int idx);
 uint game_syscall_pirata_mover(uint id, direccion key);
+void game_pirata_check_botines_H(char jugador, int posX, int posY);
+void game_pirata_check_botines_V(char jugador, int posX, int posY);
 uint game_syscall_pirata_cavar(uint id);
 uint game_syscall_manejar(uint syscall, uint param1);
 void game_tick(uint id_pirata);
