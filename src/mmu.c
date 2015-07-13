@@ -110,16 +110,17 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 }
 
 int* mmu_inicializar_dir_pirata_M(unsigned int pos_mapa, unsigned int cr3, int* codigo) {
-	int i;
-	int* dir = mmu_get_pagina();
-	int* table = mmu_get_pagina();
+	//int i;
+	int* cr3s = (int*)CR3_JUGADORA;
+	int* dir = (int*)(*(cr3s));
+	/*int* table = mmu_get_pagina();
 
 	(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
 
 	for(i = 0; i < 1024; i++) {
 		(*table) = (i << 12) | 0x003;
 		table += 1;
-	}
+	}*/
 
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
 	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
@@ -137,6 +138,7 @@ int* mmu_inicializar_dir_pirata_M(unsigned int pos_mapa, unsigned int cr3, int* 
 
 	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
 
+	breakpoint();
 	return dir;
 }
 
@@ -206,7 +208,7 @@ void mmu_mapear_pirata_V(uint id, char jugador, int posX, int posY) {
 	int cr3 = *(cr3s);
 
 	//for(i = 0; i < MAX_CANT_PIRATAS_VIVOS; i++) {
-		//int cr3 = *(cr3s + 4 * i);
+	//int cr3 = *(cr3s + 4 * i);
 
 	if((*j).piratas[id].enJuego == TRUE) {
 		if(posY >= 0) {

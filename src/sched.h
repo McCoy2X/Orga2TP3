@@ -25,5 +25,7 @@ uint sched_tarea_actual();
 void sched_syscall(char desalojar);
 void sched_pirata_manual();
 void sched_pendiente();
+void sched_mapear_jugador(char jugador, uint pirata);
+void sched_actualizar_jugador(char proxJugador);
 
 #endif	/* !__SCHED_H__ */

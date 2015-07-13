@@ -1,0 +1,49 @@
+
+        /*
+        if(jugadorB.piratasEnJuego != 0) {
+            posX = jugadorB.piratas[jugadorB.proxPirata].posX;
+            posY = jugadorB.piratas[jugadorB.proxPirata].posY;
+
+            dirCodigo = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
+            cr3 = (int*)CR3_JUGADORB;
+
+            mmu_unmapear_pagina(0x400000, *(cr3));
+            mmu_mapear_pagina(0x400000, *(cr3), dirCodigo);
+
+        } else {
+            posX = jugadorA.piratas[nuevoId - 15].posX;
+            posY = jugadorA.piratas[nuevoId - 15].posY;
+
+            dirCodigo = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
+            cr3 = (int*)CR3_JUGADORA;
+
+            mmu_unmapear_pagina(0x400000, *(cr3));
+            mmu_mapear_pagina(0x400000, *(cr3), dirCodigo);
+
+        }
+        */
+
+        /*
+        dSched.proxJugador = 'A';    	
+    	if(jugadorA.piratasEnJuego == 0) {
+    		nPirata = 8;
+            dSched.proxJugador = 'B';
+    	} else {
+	    	tPirata = jugadorA.proxPirata;
+	    	nPirata = tPirata; // Se queda en el mismo en el caso de no haber otro pirata
+	    	for(i = 0; i < 7; i++) {
+		    	if(tPirata == 7) {
+		    		tPirata = 0;
+		    	} else {
+		    		tPirata++;
+		    	}
+
+		    	if((jugadorA.piratas[tPirata]).enJuego == TRUE) {
+		    		nPirata = tPirata;
+		    		break;
+		    	}
+	    	}
+	   	}
+
+	   	jugadorA.proxPirata = nPirata;
+        */
