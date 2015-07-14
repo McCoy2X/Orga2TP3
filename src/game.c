@@ -598,6 +598,7 @@ void game_terminar_si_es_hora()
 #define KB_l_Br     0x26 // 0xa6
 #define KB_shiftA   0x2a // 0xaa
 #define KB_shiftB   0x36 // 0xb6
+#define KB_y        0x15
 
 
 void game_atender_teclado(unsigned char tecla)
@@ -668,5 +669,7 @@ void game_atender_teclado(unsigned char tecla)
                 }
             }
         }
+    } else if(tecla == KB_y) {
+        
     }
 }

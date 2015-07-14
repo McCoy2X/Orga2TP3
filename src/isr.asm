@@ -141,6 +141,7 @@ _isr33:
 	;push ecx
 	;push ebx
 	push eax
+	xchg bx, bx
 	
 	call game_atender_teclado
 
@@ -158,8 +159,6 @@ _isr70:
 	pushad
 	mov ebx, eax ; Codigo del syscall
 	mov esi, ecx ; Parametro secundario
-
-	call fin_intr_pic1
 
 	cmp ebx, 0x1
 	je .moverse
