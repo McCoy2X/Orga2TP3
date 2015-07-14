@@ -74,8 +74,9 @@ uint game_valor_tesoro(uint x, uint y)
 	int i;
 	for (i = 0; i < BOTINES_CANTIDAD; i++)
 	{
-		if (botines[i][0] == x && botines[i][1] == y)
+		if (botines[i][0] == x && botines[i][1] == y) {
 			return botines[i][2];
+        }
 	}
 	return 0;
 }
@@ -363,14 +364,14 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
                     if((*j).botines[i][1] == posX && (*j).botines[i][2] == posY) {
                         break;
                     }
+                }
 
-                    if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
-                        print("o", posX, posY + 1, color);
-                        (*j).botines[i][0] = 1;
-                        (*j).botines[i][1] = posX;
-                        (*j).botines[i][2] = posY;
-                        (*j).botinesDescubiertos++;
-                    }
+                if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                    print("o", posX, posY + 1, color);
+                    (*j).botines[i][0] = 1;
+                    (*j).botines[i][1] = posX;
+                    (*j).botines[i][2] = posY;
+                    (*j).botinesDescubiertos++;
                 }
             }
         }
@@ -382,14 +383,14 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
                 if((*j).botines[i][1] == (posX + 1) && (*j).botines[i][2] == posY) {
                     break;
                 }
+            }
 
-                if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
-                    print("o", posX + 1, posY + 1, color);
-                    (*j).botines[i][0] = 1;
-                    (*j).botines[i][1] = posX + 1;
-                    (*j).botines[i][2] = posY;
-                    (*j).botinesDescubiertos++;
-                }
+            if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                print("o", posX + 1, posY + 1, color);
+                (*j).botines[i][0] = 1;
+                (*j).botines[i][1] = posX + 1;
+                (*j).botines[i][2] = posY;
+                (*j).botinesDescubiertos++;
             }
         }
     }
@@ -401,14 +402,14 @@ void game_pirata_check_botines_H(char jugador, int posX, int posY) {
                     if((*j).botines[i][1] == (posX + 2) && (*j).botines[i][2] == posY) {
                         break;
                     }
+                }
 
-                    if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
-                        print("o", posX + 2, posY +1 , color);
-                        (*j).botines[i][0] = 1;
-                        (*j).botines[i][1] = posX + 2;
-                        (*j).botines[i][2] = posY;
-                        (*j).botinesDescubiertos++;
-                    }
+                if(i == (*j).botinesDescubiertos) { // Si recorri todos los botines, y no se encuentra en el arreglo, lo agrego
+                    print("o", posX + 2, posY + 1 , color);
+                    (*j).botines[i][0] = 1;
+                    (*j).botines[i][1] = posX + 2;
+                    (*j).botines[i][2] = posY;
+                    (*j).botinesDescubiertos++;
                 }
             }
         }

@@ -141,7 +141,6 @@ _isr33:
 	;push ecx
 	;push ebx
 	push eax
-	xchg bx, bx
 	
 	call game_atender_teclado
 
