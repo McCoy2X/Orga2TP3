@@ -8,8 +8,12 @@
 #include "defines.h"
 #include "game.h"
 #include "syscall.h"
+#include "i386.h"
 
 void task() {
     /* Tarea */    
+
+    while(1) { breakpoint(); syscall_mover(IZQ);}
+
    while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }
 }

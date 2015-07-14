@@ -212,6 +212,5 @@ _isr70:
 	add esp, 4
 	push eax
 	jmp 0x70:0
-	xchg bx, bx
 	pop eax
 	iret

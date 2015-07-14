@@ -208,15 +208,21 @@ void sched_pendiente() {
     jugador_t* jugador;
     int cr3j;
     unsigned char tssJ;
+    uint posInitX;
+    uint posInitY;
 
     if(tarea >= 15 && tarea < 23) {
         jugador = &jugadorA;
         cr3j = CR3_JUGADORA;
         tssJ = 'A';
+        posInitX = 1;
+        posInitY = 1;
     } else if(tarea >= 23 && tarea < 31) {
         jugador = &jugadorB;
         cr3j = CR3_JUGADORB;
         tssJ = 'B';
+        posInitX = 78;
+        posInitY = 42;
     }
 
     if((*jugador).piratasEnJuego < 8) { // Hay algun slot libre?
@@ -234,11 +240,11 @@ void sched_pendiente() {
 
                 (*jugador).piratas[slotLibre].enJuego = TRUE;
                 (*jugador).piratas[slotLibre].esPirata = FALSE;
-                (*jugador).piratas[slotLibre].posX = 1;
-                (*jugador).piratas[slotLibre].posY = 1;
+                (*jugador).piratas[slotLibre].posX = posInitX;
+                (*jugador).piratas[slotLibre].posY = posInitY;
 
                 (*jugador).piratasEnJuego++;
-                (*jugador).botinesDescubiertos--;
+                //(*jugador).botinesDescubiertos--;
 
                 int cr3 = cr3j + 4 * slotLibre;
 
@@ -258,6 +264,7 @@ void sched_pendiente() {
                 if(tssJ == 'A') {
                    completar_tabla_tss(&tss_jugadorA[slotLibre], (void*)0x11000, (int*)cr3);
                 } else if (tssJ == 'B') {
+                    breakpoint();
                     completar_tabla_tss(&tss_jugadorB[slotLibre], (void*)0x13000, (int*)cr3);
                 }
 
@@ -275,7 +282,6 @@ void sched_pendiente() {
                         mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica);
                         }
                     }
-                    breakpoint();
                 }
             }
         }

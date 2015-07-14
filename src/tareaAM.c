@@ -15,7 +15,6 @@ void task(int x_target, int y_target) {
     
     //breakpoint();
     uint pos = syscall_posicion(-1);
-    breakpoint();
     int x = pos & 0xFF;
     int y = pos >> 8;
     //breakpoint();

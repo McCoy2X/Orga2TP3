@@ -24,8 +24,8 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #define BOTINES_CANTIDAD 8
 
 uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
-                                        {10,  2, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
-                                        {49,  3, 50}, {49, 38, 50}, {64, 21, 100}, {34, 21, 100}
+                                        {30,  3, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
+                                        {49,  3, 50}, {70, 42, 50}, {64, 21, 100}, {34, 21, 100}
                                     };
 
 jugador_t jugadorA;
@@ -281,19 +281,22 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                         print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
                         ((*j).piratas[id - idJugador]).posX = posX + 1;
                     } else {
+                        breakpoint();
                         sched_syscall(1);
                     }
                 }
             } else if(dir == 13) {
                 if(posX != 0) {
                     if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX - 1)]) == 1) {
+                        breakpoint();
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
-                        mmu_mapear_pagina(0x00400000, cr3, MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
                         ((*j).piratas[id - idJugador]).posX = posX - 1;
                     } else {
+                        breakpoint();
                         sched_syscall(1);
                     }
                 }
@@ -430,10 +433,10 @@ void game_pirata_check_botines_V(char jugador, int posX, int posY) {
     }
 
     if(posX + 2 <= 79) {
-        if((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX == 1]) {
+        if((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX] == 1) {
             if(game_valor_tesoro(posX, posY + 2) != 0) {
                 for(i = 0; i < (*j).botinesDescubiertos; i++) { // Reviso si el tesoro ya fue encontrado;
-                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == (posY + 1)) {
+                    if((*j).botines[i][1] == posX && (*j).botines[i][2] == (posY + 2)) {
                         break;
                     }
                 }
