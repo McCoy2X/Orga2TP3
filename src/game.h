@@ -49,6 +49,9 @@ typedef struct jugador_t
     char posicionesMapeadas[3520]; // 80 x 44 posiciones
     uint botines[BOTINES_CANTIDAD][3]; // Tuplas de: Tesoro pendiente, posX, posY
     uint botinesDescubiertos;
+    uint puntos;
+    char barraTareas[16];
+    uint posReloj[8];
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 

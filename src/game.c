@@ -23,9 +23,12 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 
 #define BOTINES_CANTIDAD 8
 
+const char relojJugadores[] = "|/-\\";
+#define TAMANO_RELOJ 4
+
 uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
                                         {30,  3, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
-                                        {49,  3, 50}, {70, 42, 50}, {64, 21, 100}, {34, 21, 100}
+                                        {49,  3, 50}, {49, 38, 50}, {64, 21, 100}, {34, 21, 100}
                                     };
 
 jugador_t jugadorA;
@@ -118,6 +121,41 @@ void game_pirata_inicializar(pirata_t *pirata, jugador_t *j, uint index, uint id
 void game_tick(uint id_pirata)
 {
     screen_actualizar_reloj_global();
+    int i;
+    int j = 0;
+
+    for(i = 0; i < 8; i++) {
+        j = i * 2;
+
+        if(jugadorA.piratas[i].enJuego == TRUE) {
+            if(id_pirata >= 15 && id_pirata < 23) {
+                if(i == id_pirata - 15) {
+                    jugadorA.barraTareas[j] = relojJugadores[jugadorA.posReloj[i]];
+                    jugadorA.posReloj[i] = (jugadorA.posReloj[i] + 1) % TAMANO_RELOJ;
+                }
+            }
+        } else {
+            jugadorA.barraTareas[j] = 'X';
+            jugadorA.posReloj[i] = 0;
+        }
+
+        if(jugadorB.piratas[i].enJuego == TRUE) {
+            if(id_pirata >= 23 && id_pirata < 31) {
+                if(i == id_pirata - 23) {
+                    jugadorB.barraTareas[j] = relojJugadores[jugadorB.posReloj[i]];
+                    jugadorB.posReloj[i] = (jugadorB.posReloj[i] + 1) % TAMANO_RELOJ;
+                }
+            }
+        } else {
+            jugadorB.barraTareas[j] = 'X';
+            jugadorB.posReloj[i] = 0;
+        }
+        //j = j + 2;
+    }
+
+    print(jugadorA.barraTareas, 4, 48, C_BG_BLACK | C_FG_RED);
+    print(jugadorB.barraTareas, 60, 48, C_BG_BLACK | C_FG_BLUE);
+
 }
 
 
@@ -281,14 +319,12 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                         print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
                         ((*j).piratas[id - idJugador]).posX = posX + 1;
                     } else {
-                        breakpoint();
                         sched_syscall(1);
                     }
                 }
             } else if(dir == 13) {
                 if(posX != 0) {
                     if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX - 1)]) == 1) {
-                        breakpoint();
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
                         mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
 
@@ -296,7 +332,6 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                         print("M", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
                         ((*j).piratas[id - idJugador]).posX = posX - 1;
                     } else {
-                        breakpoint();
                         sched_syscall(1);
                     }
                 }
@@ -460,14 +495,26 @@ void game_pirata_minero() {
 uint game_syscall_pirata_cavar(uint id) {
     uint posY;
     uint posX;
+    jugador_t* j;
     int i;
+    uint posXPuntaje;
+    uint posYPuntaje;
+    unsigned short color;
 
     if(id > 14 && id < 23) {
         posY = (jugadorA.piratas[id - 15]).posY;
         posX = (jugadorA.piratas[id - 15]).posX;
+        j = &jugadorA;
+        posXPuntaje = 35;
+        posYPuntaje = 47;
+        color = C_BG_RED | C_FG_WHITE;
     } else if(id >= 23 && id < 31) {
         posY = (jugadorB.piratas[id - 23]).posY;
         posX = (jugadorB.piratas[id - 23]).posX;
+        j = &jugadorB;
+        posXPuntaje = 42;
+        posYPuntaje = 47;
+        color = C_BG_BLUE | C_FG_WHITE;
     }
 
     for(i = 0; i < BOTINES_CANTIDAD; i++) {
@@ -476,6 +523,8 @@ uint game_syscall_pirata_cavar(uint id) {
                 return 1;
             } else {
                 botines[i][2]--;
+                (*j).puntos++;
+                print_dec((*j).puntos, 3, posXPuntaje, posYPuntaje, color);
                 return 0;
             }
         }

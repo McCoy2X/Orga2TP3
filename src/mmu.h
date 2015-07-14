@@ -19,7 +19,6 @@
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
 int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* codigo);
-int* mmu_inicializar_dir_pirata_M(unsigned int pos_mapa, unsigned int cr3, int* codigo);
 
 int* mmu_get_pagina();
 void mmu_copiar_pagina(int* original, int* copia);

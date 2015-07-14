@@ -38,7 +38,7 @@ extern game_syscall_pirata_posicion
 global _isr%1
 
 _isr%1:
-	xchg bx, bx
+	;xchg bx, bx
 	pushad
 	call fin_intr_pic1
 	mov eax, 1

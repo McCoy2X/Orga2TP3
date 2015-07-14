@@ -109,39 +109,6 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	return dir;
 }
 
-int* mmu_inicializar_dir_pirata_M(unsigned int pos_mapa, unsigned int cr3, int* codigo) {
-	//int i;
-	int* cr3s = (int*)CR3_JUGADORA;
-	int* dir = (int*)(*(cr3s));
-	/*int* table = mmu_get_pagina();
-
-	(*dir) = (((int)table) & 0xFFFFF000) | 0x003;
-
-	for(i = 0; i < 1024; i++) {
-		(*table) = (i << 12) | 0x003;
-		table += 1;
-	}*/
-
-	unsigned int virtual = 0x0400000 + PAGE_SIZE;
-	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
-	mmu_mapear_pagina(0x0400000, (unsigned int)cr3, pos_mapa);
-	mmu_mapear_pagina(0x0400000, (unsigned int)dir, pos_mapa);
-	mmu_copiar_pagina(codigo, (int*)virtual);
-	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
-	mmu_unmapear_pagina(0x0400000, (unsigned int)cr3);
-
-	if(pos_mapa == INICIO_PIRATAA) {
-		print("M", 1, 2, C_BG_GREEN | C_FG_BLACK);
-	} else {
-		print("M", 78, 43, C_BG_BLUE | C_FG_BLACK);
-	}
-
-	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
-
-	breakpoint();
-	return dir;
-}
-
 // Copia la pagina original a copia
 void mmu_copiar_pagina(int* original, int* copia) {
 	int i;
@@ -226,7 +193,7 @@ void mmu_mapear_pirata_V(uint id, char jugador, int posX, int posY) {
 			    (*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] = 1;
 			}
 
-		    if(posY + 2 <= 79) {
+		    if(posY + 2 <= 43) {
 		    	if ((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX] != 1) {
 			    	mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
 			    	print(" ", posX, posY + 3, color);

@@ -21,10 +21,24 @@ void inicializar_sched() {
     jugadorA.proxPirata = 8;
     jugadorA.piratasEnJuego = 0;
     jugadorA.botinesDescubiertos = 0;
+    jugadorA.puntos = 0;
+    jugadorA.barraTareas[15] = '\0';
 
     jugadorB.proxPirata = 8;
     jugadorB.piratasEnJuego = 0;
     jugadorB.botinesDescubiertos = 0;
+    jugadorB.puntos = 0;
+    jugadorB.barraTareas[15] = '\0';
+
+    for(i = 0; i < 15; i++) { // Esto lo hago porque el compilador no me deja asignarlo directamente
+        if(i % 2 == 0) {
+            jugadorA.barraTareas[i] = 'X';
+            jugadorB.barraTareas[i] = 'X';
+        } else {
+            jugadorA.barraTareas[i] = ' ';
+            jugadorB.barraTareas[i] = ' ';
+        }
+    }
 
     for(i = 0; i < 3520; i++) {
         jugadorA.posicionesMapeadas[i] = 0;
@@ -43,6 +57,9 @@ void inicializar_sched() {
         jugadorB.botines[i][0] = 0;
         jugadorB.botines[i][1] = 0;
         jugadorB.botines[i][2] = 0;
+
+        jugadorA.posReloj[i] = 0;
+        jugadorB.posReloj[i] = 0;
     }
 }
 
@@ -264,7 +281,6 @@ void sched_pendiente() {
                 if(tssJ == 'A') {
                    completar_tabla_tss(&tss_jugadorA[slotLibre], (void*)0x11000, (int*)cr3);
                 } else if (tssJ == 'B') {
-                    breakpoint();
                     completar_tabla_tss(&tss_jugadorB[slotLibre], (void*)0x13000, (int*)cr3);
                 }
 
@@ -339,12 +355,5 @@ void sched_pirata_manual() {
     completar_tabla_tss(&tss_jugadorB[0], (void*)0x12000, (int*)CR3_JUGADORB);
 
     mmu_mapear_pagina(0x400000, *((int*)CR3_JUGADORA), INICIO_PIRATAA);
-    //mmu_mapear_pagina(0x400000, *((int*)CR3_JUGADORB), INICIO_PIRATAB);
-	//mmu_copiar_pagina((int*)0x10000, (int*)0x0400000);
-    //mmu_copiar_pagina((int*)0x12000, (int*)0x156E000);
 
-	// int* pila = (int*)0x00400FF4;
-	// (*pila) = 1;
-	// pila = pila + 4;
-	// (*pila) = 1;
 }
