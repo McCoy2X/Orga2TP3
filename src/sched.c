@@ -22,13 +22,39 @@ void inicializar_sched() {
     jugadorA.piratasEnJuego = 0;
     jugadorA.botinesDescubiertos = 0;
     jugadorA.puntos = 0;
-    jugadorA.barraTareas[15] = '\0';
 
     jugadorB.proxPirata = 8;
     jugadorB.piratasEnJuego = 0;
     jugadorB.botinesDescubiertos = 0;
     jugadorB.puntos = 0;
     jugadorB.barraTareas[15] = '\0';
+
+    for(i = 0; i < 3520; i++) {
+        jugadorA.posicionesMapeadas[i] = 0;
+        jugadorB.posicionesMapeadas[i] = 0;
+    }
+
+    // El puerto y la grilla de 3x3 esta mapeada desde el comienzo
+    jugadorA.barraTareas[15] = '\0';
+    jugadorA.posicionesMapeadas[0] = 1;
+    jugadorA.posicionesMapeadas[1] = 1;
+    jugadorA.posicionesMapeadas[2] = 1;
+    jugadorA.posicionesMapeadas[80] = 1;
+    jugadorA.posicionesMapeadas[81] = 1;
+    jugadorA.posicionesMapeadas[82] = 1;
+    jugadorA.posicionesMapeadas[160] = 1;
+    jugadorA.posicionesMapeadas[161] = 1;
+    jugadorA.posicionesMapeadas[162] = 1;
+
+    jugadorB.posicionesMapeadas[3357] = 1;
+    jugadorB.posicionesMapeadas[3358] = 1;
+    jugadorB.posicionesMapeadas[3359] = 1;
+    jugadorB.posicionesMapeadas[3437] = 1;
+    jugadorB.posicionesMapeadas[3438] = 1;
+    jugadorB.posicionesMapeadas[3439] = 1;
+    jugadorB.posicionesMapeadas[3517] = 1;
+    jugadorB.posicionesMapeadas[3518] = 1;
+    jugadorB.posicionesMapeadas[3519] = 1;
 
     for(i = 0; i < 15; i++) { // Esto lo hago porque el compilador no me deja asignarlo directamente
         if(i % 2 == 0) {
@@ -38,11 +64,6 @@ void inicializar_sched() {
             jugadorA.barraTareas[i] = ' ';
             jugadorB.barraTareas[i] = ' ';
         }
-    }
-
-    for(i = 0; i < 3520; i++) {
-        jugadorA.posicionesMapeadas[i] = 0;
-        jugadorB.posicionesMapeadas[i] = 0;
     }
 
     for(i = 0; i < 8; i++) {
@@ -65,9 +86,9 @@ void inicializar_sched() {
 
 uint sched_proxima_a_ejecutar() {
     if(dSched.proxJugador == 'A') {
-    	if(jugadorA.proxPirata == 8) {
+    	if(jugadorA.piratasEnJuego == 0) {
             // NO HAY PIRATAS
-            if(jugadorB.proxPirata == 8) {
+            if(jugadorB.piratasEnJuego == 0) {
                 return 14;
             } else {
                 return 23 + jugadorB.proxPirata;
@@ -76,8 +97,8 @@ uint sched_proxima_a_ejecutar() {
             return 15 + jugadorA.proxPirata;
         }
     } else if(dSched.proxJugador == 'B') {
-    	if(jugadorB.proxPirata == 8) {
-            if(jugadorA.proxPirata == 8) {
+    	if(jugadorB.piratasEnJuego == 0) {
+            if(jugadorA.piratasEnJuego == 0) {
                 return 14;
             } else {
                 return 15 + jugadorA.proxPirata;
@@ -88,31 +109,6 @@ uint sched_proxima_a_ejecutar() {
     }
 
     return 14;
-}
-
-void sched_mapear_jugador(char jugador, uint pirata) {
-    int* cr3;
-    uint posX;
-    uint posY;
-    uint dirCodigo;
-    jugador_t* j;
-
-    if(jugador == 'A') {
-        cr3 = (int*)CR3_JUGADORA;
-        j = &jugadorA;
-    } else {
-        cr3 = (int*)CR3_JUGADORB;
-        j = &jugadorB;
-    }
-
-    posX = (*j).piratas[pirata].posX;
-    posY = (*j).piratas[pirata].posY;
-
-    dirCodigo = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
-
-    //mmu_unmapear_pagina(0x400000, *(cr3));
-    breakpoint();
-    mmu_mapear_pagina(0x400000, *(cr3), dirCodigo);
 }
 
 void sched_actualizar_jugador(char proxJugador) {
@@ -171,29 +167,9 @@ uint sched_tick(uint id) {
     uint nuevoId = id;
 
     if(dSched.proxJugador == 'A') {
-        // Remapeo el codigo de la tarea
-        /*if(jugadorA.piratasEnJuego != 0) {
-            breakpoint();
-            sched_mapear_jugador('A', jugadorA.proxPirata);
-
-        } else {
-            sched_mapear_jugador('B', jugadorB.proxPirata);
-
-        }*/
-
         sched_actualizar_jugador(dSched.proxJugador);
 
     } else if(dSched.proxJugador == 'B') {
-        
-        /*if(jugadorB.piratasEnJuego != 0) {
-            breakpoint();
-            sched_mapear_jugador('B', jugadorB.proxPirata);
-
-        } else {
-            sched_mapear_jugador('A', jugadorA.proxPirata);
-
-        }*/
-
         sched_actualizar_jugador(dSched.proxJugador);
     }
 
@@ -228,95 +204,89 @@ void sched_pendiente() {
     uint posInitX;
     uint posInitY;
 
-    if(tarea >= 15 && tarea < 23) {
-        jugador = &jugadorA;
-        cr3j = CR3_JUGADORA;
-        tssJ = 'A';
-        posInitX = 1;
-        posInitY = 1;
-    } else if(tarea >= 23 && tarea < 31) {
-        jugador = &jugadorB;
-        cr3j = CR3_JUGADORB;
-        tssJ = 'B';
-        posInitX = 78;
-        posInitY = 42;
-    }
+    if(tarea != 14) {
+        if(tarea >= 15 && tarea < 23) {
+            jugador = &jugadorA;
+            cr3j = CR3_JUGADORA;
+            tssJ = 'A';
+            posInitX = 1;
+            posInitY = 1;
+        } else if(tarea >= 23 && tarea < 31) {
+            jugador = &jugadorB;
+            cr3j = CR3_JUGADORB;
+            tssJ = 'B';
+            posInitX = 78;
+            posInitY = 42;
+        }
 
-    if((*jugador).piratasEnJuego < 8) { // Hay algun slot libre?
-        for(i = 0; i < (*jugador).botinesDescubiertos; i++) { // Hay algun botin descubierto no minado?
-            if((*jugador).botines[i][0] == 1) {
-                (*jugador).botines[i][0] = 0;
+        if((*jugador).piratasEnJuego < 8) { // Hay algun slot libre?
+            for(i = 0; i < (*jugador).botinesDescubiertos; i++) { // Hay algun botin descubierto no minado?
+                if((*jugador).botines[i][0] == 1) {
+                    (*jugador).botines[i][0] = 0;
 
-                int slotLibre;
+                    int slotLibre;
 
-                for(slotLibre = 0; slotLibre < 8; slotLibre++) {
-                    if((*jugador).piratas[slotLibre].enJuego == FALSE) {
-                        break; // LO HE ENCONTRADO, WOW
+                    for(slotLibre = 0; slotLibre < 8; slotLibre++) {
+                        if((*jugador).piratas[slotLibre].enJuego == FALSE) {
+                            break; // LO HE ENCONTRADO, WOW
+                        }
                     }
-                }
 
-                (*jugador).piratas[slotLibre].enJuego = TRUE;
-                (*jugador).piratas[slotLibre].esPirata = FALSE;
-                (*jugador).piratas[slotLibre].posX = posInitX;
-                (*jugador).piratas[slotLibre].posY = posInitY;
+                    (*jugador).piratas[slotLibre].enJuego = TRUE;
+                    (*jugador).piratas[slotLibre].esPirata = FALSE;
+                    (*jugador).piratas[slotLibre].posX = posInitX;
+                    (*jugador).piratas[slotLibre].posY = posInitY;
 
-                (*jugador).piratasEnJuego++;
-                //(*jugador).botinesDescubiertos--;
+                    (*jugador).piratasEnJuego++;
+                    //(*jugador).botinesDescubiertos--;
 
-                int cr3 = cr3j + 4 * slotLibre;
+                    int cr3 = cr3j + 4 * slotLibre;
 
-                int* posX = (int*)(0x12000 - 8);
-                int* posY = (int*)(0x12000 - 4);
+                    int* posX = (int*)(0x12000 - 8);
+                    int* posY = (int*)(0x12000 - 4);
 
-                (*posX) = (*jugador).botines[i][1];
-                (*posY) = (*jugador).botines[i][2];
+                    (*posX) = (*jugador).botines[i][1];
+                    (*posY) = (*jugador).botines[i][2];
 
-                posX = (int*)(0x14000 - 8);
-                posY = (int*)(0x14000 - 4);
+                    posX = (int*)(0x14000 - 8);
+                    posY = (int*)(0x14000 - 4);
 
-                (*posX) = (*jugador).botines[i][1];
-                (*posY) = (*jugador).botines[i][2];
+                    (*posX) = (*jugador).botines[i][1];
+                    (*posY) = (*jugador).botines[i][2];
 
-                //breakpoint();
-                if(tssJ == 'A') {
-                   completar_tabla_tss(&tss_jugadorA[slotLibre], (void*)0x11000, (int*)cr3);
-                } else if (tssJ == 'B') {
-                    completar_tabla_tss(&tss_jugadorB[slotLibre], (void*)0x13000, (int*)cr3);
-                }
+                    //breakpoint();
+                    if(tssJ == 'A') {
+                       completar_tabla_tss(&tss_jugadorA[slotLibre], (void*)0x11000, (int*)cr3);
+                    } else if (tssJ == 'B') {
+                        completar_tabla_tss(&tss_jugadorB[slotLibre], (void*)0x13000, (int*)cr3);
+                    }
 
-                int j;
+                    int j;
 
-                for(j = 0; j < 3520; j++) {
-                    if((*jugador).posicionesMapeadas[j] == 1) {
-                        int dirFisica;
-                        int posX = j % 80;
-                        int posY = j / 80;
-                        int cr3s = *((int*)(cr3));
+                    for(j = 0; j < 3520; j++) {
+                        if((*jugador).posicionesMapeadas[j] == 1) {
+                            int dirFisica;
+                            int posX = j % 80;
+                            int posY = j / 80;
+                            int cr3s = *((int*)(cr3));
 
-                        dirFisica = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
+                            dirFisica = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
 
-                        mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica);
+                            mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica);
                         }
                     }
                 }
             }
         }
-
-    /*} else {
-        for(i = 0; i < jugadorB.botinesDescubiertos; i++) {
-            if(jugadorB.botines[i][0] == 1) {
-
-            }
-        }
-    }*/
+    }
 }
 
 void sched_pirata_manual() {
-	dSched.proxJugador = 'B';
+	/*dSched.proxJugador = 'A';
 	dSched.tareaActual = 15;
 
     jugadorA.piratasEnJuego = 1;
-    jugadorA.proxPirata = 0;
+    jugadorA.proxPirata = 0;*/
 	jugadorA.posicionesMapeadas[0] = 1;
 	jugadorA.posicionesMapeadas[1] = 1;
 	jugadorA.posicionesMapeadas[2] = 1;
@@ -326,14 +296,14 @@ void sched_pirata_manual() {
 	jugadorA.posicionesMapeadas[160] = 1;
 	jugadorA.posicionesMapeadas[161] = 1;
 	jugadorA.posicionesMapeadas[162] = 1;
-    jugadorA.botinesDescubiertos = 0;
+    /*jugadorA.botinesDescubiertos = 0;
 
     jugadorA.piratas[0].enJuego = TRUE;
     jugadorA.piratas[0].esPirata = TRUE;
     jugadorA.piratas[0].posX = 1;
-    jugadorA.piratas[0].posY = 1;
+    jugadorA.piratas[0].posY = 1;*/
 
-    jugadorB.piratasEnJuego = 1;
+    /*jugadorB.piratasEnJuego = 1;
     jugadorB.proxPirata = 0;
     jugadorB.posicionesMapeadas[3357] = 1;
     jugadorB.posicionesMapeadas[3358] = 1;
@@ -349,11 +319,11 @@ void sched_pirata_manual() {
     jugadorB.piratas[0].enJuego = TRUE;
     jugadorB.piratas[0].esPirata = TRUE;
     jugadorB.piratas[0].posX = 78;
-    jugadorB.piratas[0].posY = 42;
+    jugadorB.piratas[0].posY = 42;*/
 
-	completar_tabla_tss(&tss_jugadorA[0], (void*)0x10000, (int*)CR3_JUGADORA);
-    completar_tabla_tss(&tss_jugadorB[0], (void*)0x12000, (int*)CR3_JUGADORB);
+	//completar_tabla_tss(&tss_jugadorA[0], (void*)0x10000, (int*)CR3_JUGADORA);
+    //completar_tabla_tss(&tss_jugadorB[0], (void*)0x12000, (int*)CR3_JUGADORB);
 
-    mmu_mapear_pagina(0x400000, *((int*)CR3_JUGADORA), INICIO_PIRATAA);
+    //mmu_mapear_pagina(0x400000, *((int*)CR3_JUGADORA), INICIO_PIRATAA);
 
 }

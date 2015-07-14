@@ -132,7 +132,7 @@ start:
     MOV AX, 0x68
     LTR AX
 
-    call sched_pirata_manual
+    ;call sched_pirata_manual
 
     ; Configurar controlador de interrupciones
     call resetear_pic

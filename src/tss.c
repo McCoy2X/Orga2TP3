@@ -37,8 +37,8 @@ void tss_inicializar() {
     agregar_descriptor_tss(TSS_JUGADORB_7, &tss_jugadorB[6]);
     agregar_descriptor_tss(TSS_JUGADORB_8, &tss_jugadorB[7]);
 
-    tss_idle.esp      = 0x00027000;
-    tss_idle.ebp      = 0x00027000;
+    tss_idle.esp      = 0x00017000;
+    tss_idle.ebp      = 0x00017000;
     tss_idle.eip      = 0x00016000;
     tss_idle.cr3      = 0x00027000;
     tss_idle.es       = 0x0048;
@@ -49,7 +49,7 @@ void tss_inicializar() {
     tss_idle.gs       = 0x0048;
     tss_idle.eflags   = 0x00000202;
     tss_idle.iomap    = 0xFFFF;
-    tss_idle.esp0     = 0x00027000;
+    tss_idle.esp0     = (int)mmu_get_pagina() + 0x1000; //0x00027000;
     tss_idle.ss0      = 0x0048;
 }
 

@@ -318,7 +318,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                         print("M", posX, posY + 1, color);
                         print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
                         ((*j).piratas[id - idJugador]).posX = posX + 1;
-                    } else {
+                    } else { breakpoint();
                         sched_syscall(1);
                     }
                 }
@@ -602,4 +602,71 @@ void game_terminar_si_es_hora()
 
 void game_atender_teclado(unsigned char tecla)
 {
+    int i;
+    jugador_t* jugador;
+    int cr3j;
+    unsigned char tssJ;
+    uint posInitX;
+    uint posInitY;
+
+    if(tecla == KB_shiftA || tecla == KB_shiftB) {
+
+        if(tecla == KB_shiftA) {
+            jugador = &jugadorA;
+            cr3j = CR3_JUGADORA;
+            tssJ = 'A';
+            posInitX = 1;
+            posInitY = 1;
+        } else {
+            jugador = &jugadorB;
+            cr3j = CR3_JUGADORB;
+            tssJ = 'B';
+            posInitX = 78;
+            posInitY = 42;
+        }
+
+        if((*jugador).piratasEnJuego < 8) { // Hay algun slot libre?
+
+            int slotLibre;
+
+            for(slotLibre = 0; slotLibre < 8; slotLibre++) {
+                if((*jugador).piratas[slotLibre].enJuego == FALSE) {
+                    break; // LO HE ENCONTRADO, WOW
+                }
+            }
+
+            (*jugador).piratas[slotLibre].enJuego = TRUE;
+            (*jugador).piratas[slotLibre].esPirata = TRUE;
+            (*jugador).piratas[slotLibre].posX = posInitX;
+            (*jugador).piratas[slotLibre].posY = posInitY;
+
+            if((*jugador).piratasEnJuego == 0) {
+                (*jugador).proxPirata = slotLibre;
+            }
+
+            (*jugador).piratasEnJuego++;
+
+            int cr3 = cr3j + 4 * slotLibre;
+
+            //breakpoint();
+            if(tssJ == 'A') {
+                completar_tabla_tss(&tss_jugadorA[slotLibre], (void*)0x10000, (int*)cr3);
+            } else if (tssJ == 'B') {
+                completar_tabla_tss(&tss_jugadorB[slotLibre], (void*)0x12000, (int*)cr3);
+            }
+
+            for(i = 0; i < 3520; i++) {
+                if((*jugador).posicionesMapeadas[i] == 1) {
+                    int dirFisica;
+                    int posX = i % 80;
+                    int posY = i / 80;
+                    int cr3s = *((int*)(cr3));
+
+                    dirFisica = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
+
+                    mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica);
+                }
+            }
+        }
+    }
 }

@@ -21,7 +21,7 @@ void task(int x_target, int y_target) {
     int i;
     for(i=x; i < x_target; i++)
         syscall_mover(DER);
-
+    
     for(i=y; i < y_target; i++)
         syscall_mover(ABA);
 

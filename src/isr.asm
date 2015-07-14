@@ -29,6 +29,7 @@ extern print
 extern game_syscall_pirata_mover
 extern game_syscall_pirata_cavar
 extern game_syscall_pirata_posicion
+extern game_atender_teclado
 
 ;;
 ;; Definición de MACROS
@@ -38,7 +39,7 @@ extern game_syscall_pirata_posicion
 global _isr%1
 
 _isr%1:
-	;xchg bx, bx
+	xchg bx, bx
 	pushad
 	call fin_intr_pic1
 	mov eax, 1
@@ -95,8 +96,6 @@ _isr32:
 	; GUARDO REGISTROS ANTES DE LLAMAR A LA FUNCION DE C
 	pushad
 
-	;xchg bx, bx
-
 	call fin_intr_pic1
 	call sched_proxima_a_ejecutar
 	push eax
@@ -104,7 +103,6 @@ _isr32:
 	call sched_tick
 	mov ebx, eax
 	call sched_pendiente
-	xor ecx, ecx
 	str cx
 	cmp bx, cx
 	je .fin
@@ -129,23 +127,24 @@ _isr33:
 
 	call fin_intr_pic1
 
-	mov ebx, esp
-	sub ebx, 4
+	;mov ebx, esp
+	;sub ebx, 4
 	xor eax, eax
 	in al, 0x60
+	;push eax
+	
+	;mov ecx, 0x000F000F
+	;push ecx
+	;mov ecx, 0
+	;push ecx
+	;mov ecx, 0
+	;push ecx
+	;push ebx
 	push eax
 	
-	mov ecx, 0x000F000F
-	push ecx
-	mov ecx, 0
-	push ecx
-	mov ecx, 0
-	push ecx
-	push ebx
-	
-	call print
+	call game_atender_teclado
 
-	add esp, 20
+	add esp, 4
 	popad	
 	iret
 
