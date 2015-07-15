@@ -52,21 +52,12 @@ extern datosSched dSched;
 extern estadoCPU eCPU;
 
 void inicializar_sched();
-//uint sched_tick(uint id);
 uint sched_tick();
 uint sched_proxima_a_ejecutar();
 uint sched_tarea_actual();
 void sched_syscall(char desalojar);
 void sched_pirata_manual();
 void sched_pendiente();
-/*
-void sched_setear_excepcion();
-void sched_setear_debugger();
-char sched_hubo_excepcion();
-char sched_modo_debug();
-void sched_limpiar_excepcion();
-void sched_salir_debugger();
-*/
 void sched_actualizar_jugador(char proxJugador);
 
 #endif	/* !__SCHED_H__ */

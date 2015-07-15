@@ -79,7 +79,7 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 		print(" ", 1, 1, C_BG_GREEN | C_FG_BLACK);
 		print(" ", 2, 1, C_BG_GREEN | C_FG_BLACK);
 		print(" ", 0, 2, C_BG_GREEN | C_FG_BLACK);
-		print("E", 1, 2, C_BG_GREEN | C_FG_BLACK);
+		print("x", 1, 2, C_BG_GREEN | C_FG_BLACK);
 		print(" ", 2, 2, C_BG_GREEN | C_FG_BLACK);
 		print(" ", 0, 3, C_BG_GREEN | C_FG_BLACK);
 		print(" ", 1, 3, C_BG_GREEN | C_FG_BLACK);
@@ -89,7 +89,7 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 		print(" ", 78, 42, C_BG_BLUE | C_FG_BLACK);
 		print(" ", 79, 42, C_BG_BLUE | C_FG_BLACK);
 		print(" ", 77, 43, C_BG_BLUE | C_FG_BLACK);
-		print("E", 78, 43, C_BG_BLUE | C_FG_BLACK);
+		print("x", 78, 43, C_BG_BLUE | C_FG_BLACK);
 		print(" ", 79, 43, C_BG_BLUE | C_FG_BLACK);
 		print(" ", 77, 44, C_BG_BLUE | C_FG_BLACK);
 		print(" ", 78, 44, C_BG_BLUE | C_FG_BLACK);

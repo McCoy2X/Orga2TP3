@@ -25,6 +25,7 @@ void inicializar_sched() {
     jugadorA.piratasEnJuego = 0;
     jugadorA.botinesDescubiertos = 0;
     jugadorA.puntos = 0;
+    jugadorA.barraTareas[15] = '\0';
 
     jugadorB.proxPirata = 8;
     jugadorB.piratasEnJuego = 0;
@@ -37,8 +38,7 @@ void inicializar_sched() {
         jugadorB.posicionesMapeadas[i] = 0;
     }
 
-    // El puerto y la grilla de 3x3 esta mapeada desde el comienzo
-    jugadorA.barraTareas[15] = '\0';
+    // El puerto y la grilla de 3x3 siempre van a estar mapeadas
     jugadorA.posicionesMapeadas[0] = 1;
     jugadorA.posicionesMapeadas[1] = 1;
     jugadorA.posicionesMapeadas[2] = 1;
@@ -59,7 +59,7 @@ void inicializar_sched() {
     jugadorB.posicionesMapeadas[3518] = 1;
     jugadorB.posicionesMapeadas[3519] = 1;
 
-    for(i = 0; i < 15; i++) { // Esto lo hago porque el compilador no me deja asignarlo directamente
+    for(i = 0; i < 15; i++) { // Esto lo hago porque el compilador no me deja asignar directamente el string "X X X X X X X X"
         if(i % 2 == 0) {
             jugadorA.barraTareas[i] = 'X';
             jugadorB.barraTareas[i] = 'X';
@@ -73,7 +73,8 @@ void inicializar_sched() {
         jugadorA.piratas[i].enJuego = FALSE;
         jugadorB.piratas[i].enJuego = FALSE;
 
-        // Esto esta todo en un mismo ciclo porque la cantidad de botines es 8, si no fuese asi habria que cambiarlo
+        // Esto esta todo en un mismo ciclo porque la cantidad de botines es 8 al igual 
+        // que la cantidad de piratas, si no fuese asi habria que cambiarlo
         jugadorA.botines[i][0] = 0;
         jugadorA.botines[i][1] = 0;
         jugadorA.botines[i][2] = 0;
@@ -90,7 +91,6 @@ void inicializar_sched() {
 uint sched_proxima_a_ejecutar() {
     if(dSched.proxJugador == 'A') {
     	if(jugadorA.piratasEnJuego == 0) {
-            // NO HAY PIRATAS
             if(jugadorB.piratasEnJuego == 0) {
                 return 14;
             } else {
@@ -313,20 +313,11 @@ void sched_pendiente() {
 }
 
 void sched_pirata_manual() {
-	dSched.proxJugador = 'A';
+	dSched.proxJugador = 'B';
 	dSched.tareaActual = 15;
 
     jugadorA.piratasEnJuego = 1;
     jugadorA.proxPirata = 0;
-	jugadorA.posicionesMapeadas[0] = 1;
-	jugadorA.posicionesMapeadas[1] = 1;
-	jugadorA.posicionesMapeadas[2] = 1;
-	jugadorA.posicionesMapeadas[80] = 1;
-	jugadorA.posicionesMapeadas[81] = 1;
-	jugadorA.posicionesMapeadas[82] = 1;
-	jugadorA.posicionesMapeadas[160] = 1;
-	jugadorA.posicionesMapeadas[161] = 1;
-	jugadorA.posicionesMapeadas[162] = 1;
     jugadorA.botinesDescubiertos = 0;
 
     jugadorA.piratas[0].enJuego = TRUE;
@@ -336,15 +327,6 @@ void sched_pirata_manual() {
 
     jugadorB.piratasEnJuego = 1;
     jugadorB.proxPirata = 0;
-    jugadorB.posicionesMapeadas[3357] = 1;
-    jugadorB.posicionesMapeadas[3358] = 1;
-    jugadorB.posicionesMapeadas[3359] = 1;
-    jugadorB.posicionesMapeadas[3437] = 1;
-    jugadorB.posicionesMapeadas[3438] = 1;
-    jugadorB.posicionesMapeadas[3439] = 1;
-    jugadorB.posicionesMapeadas[3517] = 1;
-    jugadorB.posicionesMapeadas[3518] = 1;
-    jugadorB.posicionesMapeadas[3519] = 1;
     jugadorB.botinesDescubiertos = 0;
 
     jugadorB.piratas[0].enJuego = TRUE;

@@ -91,9 +91,6 @@ start:
     ; Imprimir mensaje de bienvenida
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
-    ; Inicializar el juego
-
-
     ; Inicializar pantalla
     CALL screen_inicializar
 
@@ -118,6 +115,7 @@ start:
     ; Inicializar tss de la tarea Idle
     CALL tss_inicializar
  
+    ; Inicializar el juego
     ; Inicializar el scheduler
     call inicializar_sched
     
@@ -132,17 +130,12 @@ start:
     MOV AX, 0x68
     LTR AX
 
-    ;call sched_pirata_manual
-
     ; Configurar controlador de interrupciones
     call resetear_pic
     call habilitar_pic
     
-    xchg bx, bx
-
     ; Habilitar interrupciones
     sti
-    ;jmp 0x78:0
 
     ; Saltar a la primera tarea: Idle
     JMP 0x70:0

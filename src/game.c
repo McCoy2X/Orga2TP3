@@ -50,12 +50,6 @@ uint game_posicion_valida(int x, int y) {
 	return (x >= 0 && y >= 0 && x < MAPA_ANCHO && y < MAPA_ALTO);
 }
 
-pirata_t* id_pirata2pirata(uint id_pirata)
-{
-    // ~ completar ~
-	return NULL;
-}
-
 uint game_dir2xy(direccion dir, int *x, int *y)
 {
 	switch (dir)
@@ -99,14 +93,6 @@ void game_calcular_posiciones_vistas(int *vistas_x, int *vistas_y, int x, int y)
 }
 
 
-void game_inicializar()
-{
-}
-
-void game_jugador_inicializar_mapa(jugador_t *jug)
-{
-}
-
 void game_jugador_inicializar(jugador_t *j)
 {
 	static int index = 0;
@@ -116,9 +102,6 @@ void game_jugador_inicializar(jugador_t *j)
 
 }
 
-void game_pirata_inicializar(pirata_t *pirata, jugador_t *j, uint index, uint id)
-{
-}
 
 void game_tick(uint id_pirata)
 {
@@ -158,32 +141,6 @@ void game_tick(uint id_pirata)
     print(jugadorA.barraTareas, 4, 48, C_BG_BLACK | C_FG_RED);
     print(jugadorB.barraTareas, 60, 48, C_BG_BLACK | C_FG_BLUE);
 
-}
-
-
-void game_pirata_relanzar(pirata_t *pirata, jugador_t *j, uint tipo)
-{
-}
-
-pirata_t* game_jugador_erigir_pirata(jugador_t *j, uint tipo)
-{
-    // ~ completar ~
-
-	return NULL;
-}
-
-
-void game_jugador_lanzar_pirata(jugador_t *j, uint tipo, int x, int y)
-{
-}
-
-void game_pirata_habilitar_posicion(jugador_t *j, pirata_t *pirata, int x, int y)
-{
-}
-
-
-void game_explorar_posicion(jugador_t *jugador, int c, int f)
-{
 }
 
 
@@ -490,9 +447,6 @@ void game_pirata_check_botines_V(char jugador, int posX, int posY) {
     }
 }
 
-void game_pirata_minero() {
-
-}
 
 uint game_syscall_pirata_cavar(uint id) {
     uint posY;
@@ -535,12 +489,6 @@ uint game_syscall_pirata_cavar(uint id) {
     return 1;
 }
 
-uint game_syscall_cavar(uint id)
-{
-    // ~ completar ~
-
-	return 0;
-}
 
 uint game_syscall_pirata_posicion(uint id, int idx)
 {
@@ -692,32 +640,6 @@ void game_restaurar_pantalla() {
             screen_pintar(tempPantalla[posArreglo][0], tempPantalla[posArreglo][1], j, i);
         }
     }
-}
-
-uint game_syscall_manejar(uint syscall, uint param1)
-{
-    // ~ completar ~
-    return 0;
-}
-
-void game_pirata_exploto(uint id)
-{
-}
-
-pirata_t* game_pirata_en_posicion(uint x, uint y)
-{
-	return NULL;
-}
-
-
-void game_jugador_anotar_punto(jugador_t *j)
-{
-}
-
-
-
-void game_terminar_si_es_hora()
-{
 }
 
 

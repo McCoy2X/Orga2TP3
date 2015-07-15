@@ -51,11 +51,6 @@ _isr%1:
 	popad
 	jmp 0x70:0
 	iret
-	; interrupcion_%1_msg db     'INTERRRUPCION ', %1
-	; interrupcion_%1_len equ    $ - interrupcion_%1_msg
-	; imprimir_texto_mp interrupcion_%1_msg, interrupcion_%1_len, 0x07, %1, 0
- ;    mov eax, %1
- ;    jmp $
 
 %endmacro
 
@@ -91,29 +86,6 @@ ISR 19
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
-
-; global _isr32
-; _isr32:
-; 	; GUARDO REGISTROS ANTES DE LLAMAR A LA FUNCION DE C
-; 	pushad
-
-; 	call fin_intr_pic1
-; 	call sched_proxima_a_ejecutar
-; 	push eax
-; 	call sched_tick
-; 	mov ebx, eax
-; 	call sched_pendiente
-; 	str cx
-; 	cmp bx, cx
-; 	je .fin
-
-; 	mov [sched_tarea_selector], bx
-; 	jmp far [sched_tarea_offset]
-
-; 	.fin:
-; 	add esp, 4
-; 	popad
-; 	iret
 
 global _isr32
 _isr32:
@@ -205,7 +177,7 @@ _isr70:
 	jmp 0x70:0
 	iret
 
-	.fineax:
+	.fineax: ; Fin con retorno de parametro por eax
 	pop edi
 	pop esi
 	pop ebp
