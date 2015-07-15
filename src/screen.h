@@ -43,6 +43,8 @@ void screen_refrescar();
 void screen_pintar_puntajes();
 
 void screen_actualizar_reloj_global();
+uchar screen_valor_actual(uint fila, uint columna);
+uchar screen_color_actual(uint fila, uint columna);
 void screen_actualizar_reloj_pirata (jugador_t *j, pirata_t *pirata);
 unsigned char screen_color_jugador(jugador_t *j);
 unsigned char screen_caracter_pirata(unsigned int tipo);

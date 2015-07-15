@@ -34,6 +34,7 @@ uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
 jugador_t jugadorA;
 jugador_t jugadorB;
 
+uchar tempPantalla[1080][2];
 
 void* error()
 {
@@ -228,7 +229,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
 
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
-                    mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE, READWRITE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX, posY, C_BG_RED | C_FG_BLACK);
@@ -243,7 +244,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
 
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
-                    mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE, READWRITE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX, posY + 2, C_BG_RED | C_FG_BLACK);
@@ -259,7 +260,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 
                     //breakpoint();
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
-                    mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, READWRITE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -274,7 +275,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                     }
 
                     mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
-                    mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+                    mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, READWRITE);
 
                     print("E", posX, posY + 1, color);
                     print("E", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -288,7 +289,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posY != 0) {
                     if(((*j).posicionesMapeadas[(posY - 1) * MAPA_ANCHO + posX]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
-                        mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY - 1) * MAPA_ANCHO + posX) * PAGE_SIZE, READWRITE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX, posY, C_BG_RED | C_FG_BLACK);
@@ -301,7 +302,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posY != MAPA_ALTO - 1) {
                     if(((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE));
-                        mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE, READWRITE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX, posY + 2, C_BG_RED | C_FG_BLACK);
@@ -314,7 +315,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posX != MAPA_ANCHO - 1) {
                     if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE));
-                        mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, READWRITE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -327,7 +328,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
                 if(posX != 0) {
                     if(((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX - 1)]) == 1) {
                         mmu_copiar_pagina((int*)(0x00400000), (int*)(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE));
-                        mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE);
+                        mmu_mapear_pagina(0x00400000, cr3, MAPA + (posY * MAPA_ANCHO + (posX - 1)) * PAGE_SIZE, READWRITE);
 
                         print("M", posX, posY + 1, color);
                         print("M", posX - 1, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -560,6 +561,139 @@ uint game_syscall_pirata_posicion(uint id, int idx)
     return 0;
 }
 
+void game_guardar_estado(uint edi, uint esi, uint ebp, uint ignorar, uint ebx, uint edx, 
+                        uint ecx, uint eax, uint codigoError, uint eip, uint cs, uint eflags, uint esp, uint ss) {
+    eCPU.edi = edi;
+    eCPU.esi = esi;
+    eCPU.ebp = ebp;
+    eCPU.ebx = ebx;
+    eCPU.edx = edx;
+    eCPU.ecx = ecx;
+    eCPU.eax = eax;
+    eCPU.ss = ss;
+    eCPU.esp = esp;
+    eCPU.eflags = eflags;
+    eCPU.cs = cs;
+    eCPU.eip = eip;
+    eCPU.ds = ss;
+    eCPU.es = ss;
+    eCPU.fs = ss;
+    eCPU.gs = ss;
+    eCPU.cr0 = rcr0();
+    eCPU.cr2 = rcr2();
+    eCPU.cr4 = rcr4();
+
+    int id = sched_tarea_actual();
+
+    if(id >= 15 && id < 23) {
+        eCPU.cr3 = *((uint*)(CR3_JUGADORA + 4 * (id - 15)));
+    } else {
+        eCPU.cr3 = *((uint*)(CR3_JUGADORB + 4 * (id - 23)));
+    }
+
+    lcr3(eCPU.cr3);
+
+    eCPU.stack1 = *((uint*)(eCPU.esp));
+    eCPU.stack2 = *((uint*)(eCPU.esp + 4));
+    eCPU.stack3 = *((uint*)(eCPU.esp + 8));
+    eCPU.stack4 = *((uint*)(eCPU.esp + 12));
+    eCPU.stack5 = *((uint*)(eCPU.esp + 16));
+
+    lcr3(0x27000);
+
+    dSched.huboExcepcion = TRUE;
+
+}
+
+void game_guardar_pantalla() {
+    int i;
+    int j;    
+    uint posArreglo;
+
+    for(i = 25; i <= 54; i++) {
+        for(j = 7; j <= 42; j++) {
+            posArreglo = (30*(j - 7)) + (i - 25);
+
+            tempPantalla[posArreglo][0] = screen_valor_actual(j,i); 
+            tempPantalla[posArreglo][1] = screen_color_actual(j,i);
+        }
+    }
+}
+
+void game_pintar_debug() {
+    screen_pintar_rect(' ', C_BG_BLACK, 25, 7, 36, 30);
+    screen_pintar_rect(' ', C_BG_LIGHT_GREY, 26, 8, 34, 28);
+    screen_pintar_rect(' ', C_BG_RED, 26, 8, 1, 28);
+
+    print("eax", 27, 10, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("ebx", 27, 12, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("ecx", 27, 14, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("edx", 27, 16, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("esi", 27, 18, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("edi", 27, 20, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("ebp", 27, 22, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("esp", 27, 24, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("eip", 27, 26, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" cs", 27, 28, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" ds", 27, 30, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" es", 27, 32, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" fs", 27, 34, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" gs", 27, 36, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" ss", 27, 38, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print(" eflags", 27, 40, C_FG_BLACK | C_BG_LIGHT_GREY);
+
+    print("cr0", 41, 10, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("cr2", 41, 12, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("cr3", 41, 14, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("cr4", 41, 16, C_FG_BLACK | C_BG_LIGHT_GREY);
+    print("stack", 41, 27, C_FG_BLACK | C_BG_LIGHT_GREY);
+
+    print_hex(eCPU.eax, 8, 31, 10, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.ebx, 8, 31, 12, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.ecx, 8, 31, 14, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.edx, 8, 31, 16, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.esi, 8, 31, 18, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.edi, 8, 31, 20, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.ebp, 8, 31, 22, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.esp, 8, 31, 24, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.eip, 8, 31, 26, C_FG_WHITE | C_BG_LIGHT_GREY);
+
+    print_hex(eCPU.cs, 4, 31, 28, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.ds, 4, 31, 30, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.es, 4, 31, 32, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.fs, 4, 31, 34, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.gs, 4, 31, 36, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.ss, 4, 31, 38, C_FG_WHITE | C_BG_LIGHT_GREY);
+
+    print_hex(eCPU.eflags, 8, 34, 40, C_FG_WHITE | C_BG_LIGHT_GREY);
+
+    print_hex(eCPU.cr0, 8, 45, 10, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.cr2, 8, 45, 12, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.cr3, 8, 45, 14, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.cr4, 8, 45, 16, C_FG_WHITE | C_BG_LIGHT_GREY);
+
+    print_hex(eCPU.stack1, 8, 41, 30, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.stack2, 8, 41, 31, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.stack3, 8, 41, 32, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.stack4, 8, 41, 33, C_FG_WHITE | C_BG_LIGHT_GREY);
+    print_hex(eCPU.stack5, 8, 41, 34, C_FG_WHITE | C_BG_LIGHT_GREY);
+
+}
+
+void game_restaurar_pantalla() {
+    int i;
+    int j;
+    uint posArreglo;
+
+    for(i = 25; i <= 54; i++) {
+        for(j = 7; j <= 42; j++) {
+
+            posArreglo = (30*(j - 7)) + (i - 25);
+            screen_pintar(tempPantalla[posArreglo][0], tempPantalla[posArreglo][1], j, i);
+        }
+    }
+}
+
 uint game_syscall_manejar(uint syscall, uint param1)
 {
     // ~ completar ~
@@ -600,7 +734,6 @@ void game_terminar_si_es_hora()
 #define KB_shiftA   0x2a // 0xaa
 #define KB_shiftB   0x36 // 0xb6
 #define KB_y        0x15
-
 
 void game_atender_teclado(unsigned char tecla)
 {
@@ -666,11 +799,32 @@ void game_atender_teclado(unsigned char tecla)
 
                     dirFisica = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
 
-                    mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica);
+                    mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica, READONLY);
                 }
             }
         }
     } else if(tecla == KB_y) {
+        if(dSched.modoDebug == FALSE) {
+            print("DEBUG", 0, 0, C_FG_BLACK | C_BG_LIGHT_GREY);
+            dSched.modoDebug = TRUE;
+            dSched.huboExcepcion = FALSE;
+            dSched.excepcionAtendida = FALSE;
         
+        } else {
+            if(dSched.huboExcepcion == TRUE) {
+                dSched.huboExcepcion = FALSE;
+                
+                if(dSched.excepcionAtendida == TRUE) {
+                    game_restaurar_pantalla();
+                    dSched.excepcionAtendida = FALSE;
+                }
+
+            } else {
+                print("     ", 0, 0, C_FG_BLACK | C_BG_LIGHT_GREY);
+                dSched.modoDebug = FALSE;
+                dSched.huboExcepcion = FALSE;
+                dSched.excepcionAtendida = FALSE;
+            }
+        }
     }
 }

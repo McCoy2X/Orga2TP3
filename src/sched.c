@@ -11,12 +11,15 @@ definicion de funciones del scheduler
 #include "mmu.h"
 
 datosSched dSched;
+estadoCPU eCPU;
 
 void inicializar_sched() {
     int i;
 
     dSched.proxJugador = 'A'; // Jugador inicial elegido arbitrariamente
     dSched.tareaActual = 14;
+    dSched.modoDebug = FALSE;
+    dSched.huboExcepcion = TRUE;
     
     jugadorA.proxPirata = 8;
     jugadorA.piratasEnJuego = 0;
@@ -161,7 +164,7 @@ void sched_actualizar_jugador(char proxJugador) {
     (*jProx).proxPirata = nPirata;
 }
 
-uint sched_tick(uint id) {
+/*uint sched_tick(uint id) {
     game_tick(id);
 
     uint nuevoId = id;
@@ -174,6 +177,35 @@ uint sched_tick(uint id) {
     }
 
 	dSched.tareaActual = nuevoId;
+    return nuevoId << 3;
+}*/
+
+uint sched_tick() {
+    uint nuevoId = sched_proxima_a_ejecutar();
+
+    if(dSched.modoDebug == TRUE && dSched.huboExcepcion == TRUE) {
+        if(dSched.excepcionAtendida == FALSE) {
+            game_guardar_pantalla();
+            game_pintar_debug();
+            dSched.excepcionAtendida = TRUE;
+        }
+
+        nuevoId = 14;
+
+    } else {
+        game_tick(nuevoId);
+
+        if(dSched.proxJugador == 'A') {
+            sched_actualizar_jugador(dSched.proxJugador);
+
+        } else if(dSched.proxJugador == 'B') {
+            sched_actualizar_jugador(dSched.proxJugador);
+        }
+
+        dSched.tareaActual = nuevoId;
+        sched_pendiente();
+    }
+
     return nuevoId << 3;
 }
 
@@ -238,7 +270,6 @@ void sched_pendiente() {
                     (*jugador).piratas[slotLibre].posY = posInitY;
 
                     (*jugador).piratasEnJuego++;
-                    //(*jugador).botinesDescubiertos--;
 
                     int cr3 = cr3j + 4 * slotLibre;
 
@@ -272,7 +303,7 @@ void sched_pendiente() {
 
                             dirFisica = MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE;
 
-                            mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica);
+                            mmu_mapear_pagina(dirFisica + 0x300000, cr3s, dirFisica, READONLY);
                         }
                     }
                 }
@@ -282,11 +313,11 @@ void sched_pendiente() {
 }
 
 void sched_pirata_manual() {
-	/*dSched.proxJugador = 'A';
+	dSched.proxJugador = 'A';
 	dSched.tareaActual = 15;
 
     jugadorA.piratasEnJuego = 1;
-    jugadorA.proxPirata = 0;*/
+    jugadorA.proxPirata = 0;
 	jugadorA.posicionesMapeadas[0] = 1;
 	jugadorA.posicionesMapeadas[1] = 1;
 	jugadorA.posicionesMapeadas[2] = 1;
@@ -296,14 +327,14 @@ void sched_pirata_manual() {
 	jugadorA.posicionesMapeadas[160] = 1;
 	jugadorA.posicionesMapeadas[161] = 1;
 	jugadorA.posicionesMapeadas[162] = 1;
-    /*jugadorA.botinesDescubiertos = 0;
+    jugadorA.botinesDescubiertos = 0;
 
     jugadorA.piratas[0].enJuego = TRUE;
     jugadorA.piratas[0].esPirata = TRUE;
     jugadorA.piratas[0].posX = 1;
-    jugadorA.piratas[0].posY = 1;*/
+    jugadorA.piratas[0].posY = 1;
 
-    /*jugadorB.piratasEnJuego = 1;
+    jugadorB.piratasEnJuego = 1;
     jugadorB.proxPirata = 0;
     jugadorB.posicionesMapeadas[3357] = 1;
     jugadorB.posicionesMapeadas[3358] = 1;
@@ -319,11 +350,9 @@ void sched_pirata_manual() {
     jugadorB.piratas[0].enJuego = TRUE;
     jugadorB.piratas[0].esPirata = TRUE;
     jugadorB.piratas[0].posX = 78;
-    jugadorB.piratas[0].posY = 42;*/
+    jugadorB.piratas[0].posY = 42;
 
-	//completar_tabla_tss(&tss_jugadorA[0], (void*)0x10000, (int*)CR3_JUGADORA);
-    //completar_tabla_tss(&tss_jugadorB[0], (void*)0x12000, (int*)CR3_JUGADORB);
-
-    //mmu_mapear_pagina(0x400000, *((int*)CR3_JUGADORA), INICIO_PIRATAA);
+	completar_tabla_tss(&tss_jugadorA[0], (void*)0x10000, (int*)CR3_JUGADORA);
+    completar_tabla_tss(&tss_jugadorB[0], (void*)0x12000, (int*)CR3_JUGADORB);
 
 }

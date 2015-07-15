@@ -57,6 +57,9 @@ typedef struct jugador_t
 
 
 extern jugador_t jugadorA, jugadorB;
+extern uchar tempPantalla[1080][2]; // Arreglo para guardar la pantalla si entramos en debug,
+                                    // la primer componente de la dupla es el contenido de 
+                                    // la posicion, la segunda es el color de la misma
 
 // ~ auxiliares dadas ~
 uint game_xy2lineal();
@@ -82,6 +85,11 @@ uint game_syscall_pirata_posicion(uint id, int idx);
 uint game_syscall_pirata_mover(uint id, direccion key);
 void game_pirata_check_botines_H(char jugador, int posX, int posY);
 void game_pirata_check_botines_V(char jugador, int posX, int posY);
+void game_guardar_estado(uint edi, uint esi, uint ebp, uint ignorar, uint ebx, uint edx, 
+                        uint ecx, uint eax, uint codigoError, uint eip, uint cs, uint eflags, uint esp, uint ss);
+void game_guardar_pantalla();
+void game_pintar_debug();
+void game_restaurar_pantalla();
 uint game_syscall_pirata_cavar(uint id);
 uint game_syscall_manejar(uint syscall, uint param1);
 void game_tick(uint id_pirata);

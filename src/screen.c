@@ -37,6 +37,11 @@ uchar screen_valor_actual(uint fila, uint columna)
     return p[fila][columna].c;
 }
 
+uchar screen_color_actual(uint fila, uint columna)
+{
+    return p[fila][columna].a;
+}
+
 void print(const char * text, uint x, uint y, unsigned short attr) {
     int i;
     for (i = 0; text[i] != 0; i++)

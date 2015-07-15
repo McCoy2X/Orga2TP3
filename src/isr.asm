@@ -30,6 +30,7 @@ extern game_syscall_pirata_mover
 extern game_syscall_pirata_cavar
 extern game_syscall_pirata_posicion
 extern game_atender_teclado
+extern game_guardar_estado
 
 ;;
 ;; Definición de MACROS
@@ -39,8 +40,8 @@ extern game_atender_teclado
 global _isr%1
 
 _isr%1:
-	xchg bx, bx
 	pushad
+	call game_guardar_estado
 	call fin_intr_pic1
 	mov eax, 1
 	push eax
@@ -91,27 +92,44 @@ ISR 19
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 
+; global _isr32
+; _isr32:
+; 	; GUARDO REGISTROS ANTES DE LLAMAR A LA FUNCION DE C
+; 	pushad
+
+; 	call fin_intr_pic1
+; 	call sched_proxima_a_ejecutar
+; 	push eax
+; 	call sched_tick
+; 	mov ebx, eax
+; 	call sched_pendiente
+; 	str cx
+; 	cmp bx, cx
+; 	je .fin
+
+; 	mov [sched_tarea_selector], bx
+; 	jmp far [sched_tarea_offset]
+
+; 	.fin:
+; 	add esp, 4
+; 	popad
+; 	iret
+
 global _isr32
 _isr32:
 	; GUARDO REGISTROS ANTES DE LLAMAR A LA FUNCION DE C
 	pushad
 
 	call fin_intr_pic1
-	call sched_proxima_a_ejecutar
-	push eax
-	;call screen_actualizar_reloj_global
 	call sched_tick
-	mov ebx, eax
-	call sched_pendiente
 	str cx
-	cmp bx, cx
+	cmp ax, cx
 	je .fin
 
-	mov [sched_tarea_selector], bx
+	mov [sched_tarea_selector], ax
 	jmp far [sched_tarea_offset]
 
 	.fin:
-	add esp, 4
 	popad
 	iret
 
@@ -127,19 +145,8 @@ _isr33:
 
 	call fin_intr_pic1
 
-	;mov ebx, esp
-	;sub ebx, 4
 	xor eax, eax
 	in al, 0x60
-	;push eax
-	
-	;mov ecx, 0x000F000F
-	;push ecx
-	;mov ecx, 0
-	;push ecx
-	;mov ecx, 0
-	;push ecx
-	;push ebx
 	push eax
 	
 	call game_atender_teclado

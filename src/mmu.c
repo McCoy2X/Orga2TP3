@@ -67,9 +67,9 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 	}
 
 	unsigned int virtual = 0x0400000 + PAGE_SIZE;
-	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa);
-	mmu_mapear_pagina(0x0400000, (unsigned int)cr3, pos_mapa);
-	mmu_mapear_pagina(0x0400000, (unsigned int)dir, pos_mapa);
+	mmu_mapear_pagina(virtual, (unsigned int)cr3, pos_mapa, READWRITE);
+	mmu_mapear_pagina(0x0400000, (unsigned int)cr3, pos_mapa, READWRITE);
+	mmu_mapear_pagina(0x0400000, (unsigned int)dir, pos_mapa, READWRITE);
 	mmu_copiar_pagina(codigo, (int*)virtual);
 	mmu_unmapear_pagina(virtual, (unsigned int)cr3);
 	mmu_unmapear_pagina(0x0400000, (unsigned int)cr3);
@@ -96,15 +96,15 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 		print(" ", 79, 44, C_BG_BLUE | C_FG_BLACK);
 	}
 
-	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa);
-	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE);
-	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE);
-	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80);
-	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80 - PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80 - PAGE_SIZE);
-	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80 + PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80 + PAGE_SIZE);
-	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80);
-	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80 - PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80 - PAGE_SIZE);
-	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80 + PAGE_SIZE);
+	mmu_mapear_pagina(pos_mapa + 0x300000, (unsigned int)dir, pos_mapa, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80 - PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80 - PAGE_SIZE, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 - PAGE_SIZE * 80 + PAGE_SIZE, (unsigned int)dir, pos_mapa - PAGE_SIZE * 80 + PAGE_SIZE, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80 - PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80 - PAGE_SIZE, READONLY);
+	mmu_mapear_pagina(pos_mapa + 0x300000 + PAGE_SIZE * 80 + PAGE_SIZE, (unsigned int)dir, pos_mapa + PAGE_SIZE * 80 + PAGE_SIZE, READONLY);
 
 	return dir;
 }
@@ -122,7 +122,7 @@ void mmu_copiar_pagina(int* original, int* copia) {
 }
 
 // Mapea una pagina virtual, cr3, fisica
-void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica) {
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char attr) {
 	unsigned int directory_offset = (virtual & 0xFFC00000) >> 22;
 	unsigned int table_offset = (virtual & 0x003FF000) >> 12;
 
@@ -134,13 +134,13 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 		table = (int*)((*dir) & 0xFFFFF000);
 		table += table_offset;
 
-		(*table) = (fisica & 0xFFFFF000) | 0x007;
+		(*table) = (fisica & 0xFFFFF000) | attr;
 	} else {
 		table = mmu_get_pagina();
-		(*dir) = (((int)table) & 0xFFFFF000) | 0x007;
+		(*dir) = (((int)table) & 0xFFFFF000) | attr;
 
 		table += table_offset;
-		(*table) = (fisica & 0xFFFFF000) | 0x007;
+		(*table) = (fisica & 0xFFFFF000) | attr;
 	}
 }
 
@@ -179,14 +179,14 @@ void mmu_mapear_pirata_V(uint id, char jugador, int posX, int posY) {
 
 		if((*j).piratas[i].enJuego == TRUE) {
 			if(posY >= 0) {
-				mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE);
+				mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, READONLY);
 				if ((*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] != 1) {
 			    	print(" ", posX, posY + 1, color);
 			    	(*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
 		    	}
 		    }
 
-			mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE);
+			mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + ((posY + 1) * MAPA_ANCHO + posX) * PAGE_SIZE, READONLY);
 		    if ((*j).posicionesMapeadas[(posY + 1) * MAPA_ANCHO + posX] != 1) {
 			    print(" ", posX, posY + 2, color);
 			    //print("M", posX, posY + 1, C_BG_RED | C_FG_BLACK);
@@ -194,7 +194,7 @@ void mmu_mapear_pirata_V(uint id, char jugador, int posX, int posY) {
 			}
 
 		    if(posY + 2 <= 43) {
-				mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE);
+				mmu_mapear_pagina(MAPA_VIRTUAL + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + ((posY + 2) * MAPA_ANCHO + posX) * PAGE_SIZE, READONLY);
 		    	if ((*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX] != 1) {
 			    	print(" ", posX, posY + 3, color);
 			    	(*j).posicionesMapeadas[(posY + 2) * MAPA_ANCHO + posX] = 1;
@@ -227,21 +227,21 @@ void mmu_mapear_pirata_H(uint id, char jugador, int posX, int posY) {
 
 		if((*j).piratas[i].enJuego == TRUE) {
 			if(posX >= 0) {
-				mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE);
+				mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + posX) * PAGE_SIZE, READONLY);
 				if((*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] != 1) {
 				   	print(" ", posX, posY + 1, color);
 				    (*j).posicionesMapeadas[posY * MAPA_ANCHO + posX] = 1;
 				}
 			}
 		
-			mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE);
+			mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 1)) * PAGE_SIZE, READONLY);
 			if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)] != 1) {
 				print(" ", posX + 1, posY + 1, color);
 				//print("M", posX + 1, posY + 1, C_BG_RED | C_FG_BLACK);
 				(*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 1)] = 1;
 			}
 			if(posX + 2 <= 79) {
-				mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE);
+				mmu_mapear_pagina(MAPA_VIRTUAL + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, cr3, MAPA + (posY * MAPA_ANCHO + (posX + 2)) * PAGE_SIZE, READONLY);
 				if((*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 2)] != 1) {
 					print(" ", posX + 2, posY + 1, color);
 					(*j).posicionesMapeadas[posY * MAPA_ANCHO + (posX + 2)] = 1;

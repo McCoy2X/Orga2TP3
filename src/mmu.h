@@ -23,7 +23,7 @@ int* mmu_inicializar_dir_pirata(unsigned int pos_mapa, unsigned int cr3, int* co
 int* mmu_get_pagina();
 void mmu_copiar_pagina(int* original, int* copia);
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3);
-void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica);
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, unsigned char attr);
 void mmu_mapear_pirata_V(uint id, char jugador, int posX, int posY);
 void mmu_mapear_pirata_H(uint id, char jugador, int posX, int posY);
 
