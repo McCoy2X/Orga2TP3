@@ -3,11 +3,14 @@
 Para la resolucion de este ejercicio modificamos \texttt{kernel.asm}, \texttt{gdt.c}, \texttt{gdt.h}, \texttt{defines.h} y \texttt{screen.c}.
 
 \subsection{a}
-Comenzamos desde \texttt{C} creando los defines de los indices de los descriptores de segmento en la gdt en \texttt{defines.h}, como los primeros 8 indices se consideran utilizados vamos a enumerar nustros descriptores desde 8 (Como indica el subindice a). \\
-\texttt{GDT\_NIVEL0\_CODIGO   8} \\
-\texttt{GDT\_NIVEL0\_DATOS    9} \\
-\texttt{GDT\_NIVEL3\_CODIGO   10} \\
-\texttt{GDT\_NIVEL3\_DATOS    11} \\
+Comenzamos desde \texttt{C} creando los defines de los indices de los descriptores de segmento en la gdt en \texttt{defines.h}, como los primeros 8 indices se consideran utilizados vamos a enumerar nustros descriptores desde 8 (Como indica el subindice a).
+
+\begin{itemize}
+\item \texttt{GDT\_NIVEL0\_CODIGO   8}
+\item \texttt{GDT\_NIVEL0\_DATOS    9}
+\item \texttt{GDT\_NIVEL3\_CODIGO   10}
+\item \texttt{GDT\_NIVEL3\_DATOS    11}
+\end{itemize}
 
 Luego en el archivo \texttt{gdt.c} agregamos al array \texttt{gdt} los 4 descriptores, con su respectivo nivel (0 para los descriptores del kernel y 3 para los de usuario) y tipo (\texttt{0xA} para los de codigo y \texttt{0x2} para los de datos), su base la posicionamos al principio de la memoria, con un limite de 500MB seteando granularity (\texttt{G = 1}) y el valor de limite (\texttt{0x1F400}), marcandolo como presente (\texttt{P = 1}) y de 32 bits (\texttt{D/B = 1}) y no de sistema (\texttt{S = 1}).
 
@@ -23,7 +26,10 @@ Para este punto volvemos a \texttt{defines.h} y definimos un quinto indice para 
 Luego en \texttt{gdt.c} agregamos al array \texttt{gdt} un descriptor que comienza en \texttt{0xB8000} (Memoria de video) con un limite de 4KB, de nivel 0, con granularidad y el resto de los bits igual que los descriptores anteriores.
 
 \subsection{d}
-Para este punto vamos a \texttt{screen.c} y completamos las siguientes funciones auxiliares: \\
-\texttt{screen\_inicializar}: Limpia la pantalla y luego llama a \texttt{screen\_pintar\_puntajes}. \\
-\texttt{screen\_pintar\_rect}: Pinta un rectangulo de un color en la pantalla, comienza de un punto (x, y) y tiene un tamaño relativo (width, height). \\
-\texttt{screen\_pintar\_puntajes}: Pinta los puntajes igual que la figura 3 del enunciado. \\
+Para este punto vamos a \texttt{screen.c} y completamos las siguientes funciones auxiliares:
+
+\begin{itemize}
+\item \texttt{screen\_inicializar}: Limpia la pantalla y luego llama a \texttt{screen\_pintar\_puntajes}.
+\item \texttt{screen\_pintar\_rect}: Pinta un rectangulo de un color en la pantalla, comienza de un punto (x, y) y tiene un tamaño relativo (width, height).
+\item \texttt{screen\_pintar\_puntajes}: Pinta los puntajes igual que la figura 3 del enunciado.
+\end{itemize}

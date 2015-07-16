@@ -1,2 +1,23 @@
 \section{Ejercicio 2}
 
+Para la resolucion de este ejercicio modificamos \texttt{idt.h}, \texttt{idt.c}, \texttt{isr.h} y \texttt{isr.asm}.
+
+\subsection{a}
+
+Para manejar las entradas de la \textbf{IDT} la catedra nos proveyo de la estructuras de datos necesarias. Para todas las entradas los atributos fueron los siguientes:
+
+\begin{itemize}
+\item \texttt{offset}: \texttt{\&\_isr??}, donde \texttt{??} es el numero de interrupcion.
+\item \texttt{selseg}: \texttt{0x40}, el segmento de codigo de nivel 0.
+\item \texttt{attr}: \texttt{0xEE0} para la interrupcion \texttt{0x46} i \texttt{0x8E0} para las demas.
+\end{itemize}
+
+A todas las entradas se las marco como presente (\texttt{P = 1}), se les puso el privilegio adecuado (\texttt{DPL = 0} y \texttt{DPL = 3} para que sea llamada por el usuario) y se seteo a las interrupciones como $interrupt\ gate$ (\texttt{GATE TYPE = 14}.
+
+A cada uno de los handlers se los definio en \texttt{isr.h}, y se cargaron todas las entradas de la \textbf{IDT} en la funcion \texttt{idt\_inicializar}.
+
+El codigo de cada $handler$ se encuentra en el fichero \texttt{isr.asm}, en esta etapa el mismo consiste en imprimir el numero de interrupcion por pantalla.
+
+\subsection{b}
+
+Para cargar la \textbf{IDT} alcanza con utilizar la funcion \texttt{LIDT} con el puntero a memoria \texttt{IDT\_DESC}, definido por la catedra. Previo a esto hay que llamar a \texttt{idt\_incializar} para cargar las entradas.

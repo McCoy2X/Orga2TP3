@@ -194,14 +194,8 @@ uint sched_tick() {
 
     } else {
         game_tick(nuevoId);
-
-        if(dSched.proxJugador == 'A') {
-            sched_actualizar_jugador(dSched.proxJugador);
-
-        } else if(dSched.proxJugador == 'B') {
-            sched_actualizar_jugador(dSched.proxJugador);
-        }
-
+        sched_actualizar_jugador(dSched.proxJugador);
+        
         dSched.tareaActual = nuevoId;
         sched_pendiente();
     }

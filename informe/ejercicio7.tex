@@ -1,2 +1,113 @@
 \section{Ejercicio 7}
 
+Para la resolucion de este ejercicio modificamos \texttt{sched.h}, \texttt{sched.c}, \texttt{game.h}, \texttt{game.c}, \texttt{screen.h}, \texttt{screen.c}, \texttt{isr.asm}
+
+\subsection{a}
+
+Para el $scheduler$ tenemos una estructura de datos que contiene los siguientes parametros:
+
+\begin{itemize}
+	\item Nro. de tarea ejecutandose
+	\item Proximo jugador (un caracter, puede ser \texttt{A} o \texttt{B}
+	\item Modo $debug$ activado
+	\item Flag de excepcion (para el modo debug)
+	\item Excepcion atendida (para imprimir la excepcion una unica vez en el caso de estar en modo debug)
+\end{itemize}
+
+El resto de los datos para poder manejar el cambio de tareas se encuentran dentro de la estructura de datos de cada jugador, estos tienen la siguiente informacion:
+
+\begin{itemize}
+	\item Arreglo de piratas del jugador
+	\item Posicion del arreglo del proximo pirata a ejecutar
+	\item Posiciones mapeadas
+	\item Arreglo de botines, este tiene la posicion del mismo y un flag que reporta si fue enviado un minero hasta el tesoro
+	\item Cantidad de botines descubiertos
+	\item Puntos hasta el momento
+	\item Datos para imprimir el reloj de cada pirata
+\end{itemize}
+
+Por ultimo, cada pirata tiene los siguiente datos:
+
+\begin{itemize}
+	\item Flag para representar si se encuentra actualmente en el juego
+	\item Flag para representar si es pirata y no un minero
+	\item Coordenadas \texttt{X} e \texttt{Y} de la posicion actual
+\end{itemize}
+
+Con estos datos tengo suficiente informacion para poder alterner entre los diferentes jugadores y los piratas de los mismos. Los valores iniciales dependen del puerto de donde salgan, pero siempre el jugador va a tener mapeado su puerto e inicialmente no va a tener piratas. Ya que ningun jugador se encuentra activo, se puede colocar cualquier jugador como proximo jugador, el $scheduler$ se encarga de saltar apropiadamente a la tarea idle en tal caso.
+
+\subsection{b}
+
+Esta funcion opera bajo el siguiente pseudo-codigo:\\
+
+\begin{lstlisting}
+	if(proxJugador == 'A') {
+		if(jugadorA.piratas == 0) {
+			if(jugadorB.piratas == 0) {
+				return IDLE;
+			} else {
+				return PROX_PIRATA_B;
+			}
+		} else {
+			return PROX_PIRATA_A;
+	} else {
+		if(jugadorB.piratas == 0) {
+			if(jugadorA.piratas == 0) {
+				return IDLE;
+			} else {
+				return PROX_PIRATA_A;
+			}
+		} else {
+			return PROX_PIRATA_B;
+		}
+	}
+\end{lstlisting}
+
+La idea detras de esta funcion es unicamente saltar a la tarea idle si no hay piratas en juego. Si hay aunque sea uno, siempre se retornara un codigo de tarea que no sea idle.
+
+\subsection{c, e, g}
+
+El mecanismo de cambio de tareas es relativamente sencillo, el trabajo principal lo hace \texttt{sched\_tick}, la cual devuelve la entrada de la \texttt{GDT} de la tarea a saltar. Esta funcion responde al siguiente pseudo-codigo:
+
+\begin{lstlisting}
+	if(huboExcepcion & modoDebug) {
+		imprimirEstadoCPU();
+		return IDLE;
+	} else {
+		actualizar_relojes(tareaActual);
+		nuevoId = proximaTarea();
+		actualizar_jugador(proxJugador);
+		mineros_pendientes(proxJugador);
+		retun entradaGdt(nuevoId);
+	}
+\end{lstlisting}
+
+Vamos a analizar la funcion por partes.
+
+\begin{itemize}
+	\item Si estamos en modo debug, y durante el ultimo tick de reloj se produjo una excepcion, tenemos que imprimir el estado de la misma, para esto tenemos los flags \texttt{modoDebug} y \texttt{huboExcepcion}. Como la ejecucion de las tareas debe interrumpirse alcanza con retornar el indice de la \textbf{GDT} de la tarea idle. La unica forma de reanudar la ejecucion de las tareas es bajando el flag \texttt{huboExcepcion}, este se baja mediante la tecla \texttt{y} del teclado.
+	\item Si la ejecucion de tareas opera de forma normal, procedemos a hacer el cambio de tareas. Primero actualizamos los relojes, cambiando el del pirata que acaba de terminar su ejecucion.
+	\item Toma el id de la nueva tarea a ejecutar, respetando la logica presentada en el punto \texttt{b} de este mismo ejercicio
+	\item Gran parte de la funcionalidad del $scheduler$ es hacer correctamente los cambios en las estructuras de datos pertinentes. Hacer esto implica cambiar el \texttt{proxJugador} y para el jugador que acaba de ejecutar su tarea, tengo que cambiar su \texttt{proxPirata}.
+	\item El criterio de cambio de jugador es simple, si el otro jugador no posee piratas en juego, no cambio de jugador.
+	\item Para cambiar el pirata del jugador que termino su ejecucion, alcanza con recorrer el arreglo de piratas del mismo en forma \"circular", es decir, si nos encontramos en el medio del mismo una vez que lleguemos al final, alcanza con volver al inicio y seguir recorriendo hasta que lleguemos a la posicion desde donde empezamos a recorrerlo. A medida que avanzamos, revisamos hasta encontrar el primer pirata en juego y lo seteamos como \texttt{proxPirata}, en el caso de que no encontremos otro, el \texttt{proxPirata} a ejecutar no cambiaria.
+	\item En el caso de que se hubiera encontrado un tesoro, es necesario liberar un minero para juntar el botin, la funcion \texttt{mineros\_pendientes} se encarga de revisar si el jugador que acaba de ejecutar encontro algun tesoro. Esto lo hace revisando el arreglo de botines del jugador en busca de algun botin no atendido, en caso de encontrarlo y si llega a haber un slot libre en los piratas del jugador, libera al minero en el puerto del jugador y marca al tesoro como atendido, en el caso contrario espera hasta el proximo tick del jugador para repetir el proceso.
+	\item Por ultimo, se retorna el indice de la \textbf{GDT} de la proxima tarea a ejecutar
+\end{itemize}
+
+Para cerrar con este punto, vamos a hablar de los handlers de reloj y de teclado:
+
+\begin{itemize}
+	\item En el caso del reloj, el $handler$ se encarga de llamar a \texttt{sched\_tick}, luego compara el valor retornado por la funcion con el valor actual del Task Register, si estos no coinciden salta a la nueva tarea
+	\item La interrupcion de teclado se encarga de lanzar piratas y de activar el modo debug
+	\item Si se toca la tecla para lanzar un pirata de algun jugador, el $handler$ se encarga de revisar si este tiene algun slot libre, en caso de haberlo procede a ocuparlo con el nuevo pirata y llena la entrada de la \textbf{TSS} del slot libre con la informacion del nuevo pirata, el codigo del pirata es mapeado en la direccion del puerto del jugador y ademas se aumenta la cantidad de piratas del jugador en uno
+	\item Si se toca la tecla de debug, el $handler$ procede a revisar en que estado se encontaraba el flag \texttt{modoDebug}, en caso de estar seteado, revisa si el flag \texttt{huboExcepcion} estaba activado, en tal caso lo baja mantiendo el modo debug activo lo cual efectivamente reanuda la ejecucion de las tareas, si no estaba activado procede a bajar el flag de \texttt{modoDebug}, efectivamente saliendo de dicho modo. En caso de que \texttt{modoDebug} no hubiese estado seteado, procederia a activarlo, entrando entonces a ejecutar en modo debug.
+\end{itemize}
+	
+\subsection{d}
+
+El $handler$ del syscall opera acorde a lo que pide el enunciado, para poder realizar sus funciones este utiliza la tarea actual del $scheduler$ para determinar el pirata que llamo al syscall, y con eso puede realizar las acciones pertinentes.
+
+\subsection{f}
+
+Cuando se produce una excepcion, el $handler$ de la misma se encarga de almacenar el estado del procesador al momento de ocurrir la excepcion, esta informacion la almacena en una estructura de datos. Una vez que almacena todo se procede a activar el flag de \texttt{huboExcepcion} del $scheduler$, se desocupa el slot del pirata (esto se determina mediante la tarea actual del $scheduler$) y se salta a la tarea idle.

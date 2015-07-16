@@ -1,11 +1,14 @@
 \section{Ejercicio 6}
 
-Para resolver este ejercicio se modicara \texttt{tss.h}, \texttt{tss.c}, \texttt{kernel.asm} y \texttt{defines.h}.
+Para resolver este ejercicio se modicara \texttt{tss.h}, \texttt{tss.c}, \texttt{kernel.asm}, \texttt{defines.h}, \texttt{game.h}, \texttt{game.c}.
 
 \subsection{a}
-Primero vamos a \texttt{defines.h} y definimos los indices de los descriptores de \textbf{TSS} en la \textbf{GDT} para las tareas inicial e idle. \\
-\texttt{TSS\_INICIAL	13} \\
-\texttt{TSS\_IDLE		14}
+Primero vamos a \texttt{defines.h} y definimos los indices de los descriptores de \textbf{TSS} en la \textbf{GDT} para las tareas inicial e idle.
+
+\begin{itemize}
+	\item \texttt{TSS\_INICIAL	13}
+	\item \texttt{TSS\_IDLE		14}
+\end{itemize}
 
 \subsection{b}
 Para este punto definimos \texttt{tss\_inicializar} en \texttt{tss.h/c} que crea la tabla de \texttt{tss\_idle}, con \texttt{EIP} en \texttt{0x16000}, con el mismo \textbf{CR3} que el kernel, la misma pila, y los descriptores de segmento de datos y codigo de nivel 0.
@@ -21,6 +24,22 @@ Luego modificamos \texttt{tss\_inicializar} y usamos \texttt{agregar\_descriptor
 Para saltar a la tarea idle vamos a modificar \texttt{kernel.asm}, primero limpiamos \texttt{EAX} ya que vamos a pasar el descriptor de \textbf{TSS} de \texttt{tss\_inicial} a ese registro, movemos el indice del descriptor a \texttt{AX} (\texttt{0x68}) y usando \texttt{LTR} lo cargamos en el registro especial de tareas. Luego hacemos un \texttt{JMP FAR} a el indice del descriptor de tareas en la \textbf{GDT} de \texttt{tss\_idle} (\texttt{0x70}).
 
 \subsection{g}
+Para poder satisfacer lo pedido por el enunciado fue necesario agregar 3 funciones a \texttt{game.c}, luego, en base al codigo del $syscall$ se modifico el $handler$ para que salte a la funcion correspondiente. Las funciones son:
 
+\begin{itemize}
+	\item \texttt{game\_syscall\_pirata\_mover}
+	\item \texttt{game\_syscall\_pirata\_cavar}
+	\item \texttt{game\_syscall\_pirata\_posicion}
+\end{itemize}
+
+La primer funcion se encarga de mapear las paginas y copiar el codigo del pirata del cual se origino el syscall, siempre y cuando se este moviendo en una direccion permitida. En el caso de que mapee, esta funcion mapea a todas las tareas del jugador que lanzo inicialmente al pirata.
+
+La segunda se encarga de cavar en la posicion actual, y devuelve un $char$ que retorna \texttt{1} para indicar si la tarea cavo un area donde no se encontraban tesoros, ya que a esta altura no nos interesa desalojar, esta retorna siempre \texttt{0}.
+
+Por ultimo, la tercer funcion se encarga de pedirle al pirata actual su posicion \texttt{X} e \texttt{Y}, retornandola de la forma que pide el enunciado.
 
 \subsection{h}
+
+Para poder lanzar un pirata de forma manual, alcanzo con crear una nueva funcion que llene la primer entrada libre de la \textbf{TSS} del jugador 1, luego se copio el codigo de la misma a la direccion fisica \texttt{0x551000} y esta se mapeo a la direccion virtual \texttt{0x400000} y se procedio a mapear al grilla de \texttt{3x3} del jugador 2.
+
+Una vez hecho esto, cargado la \texttt{tss\_inicial} y habiendo saltado a esta tarea, alcanza con saltar a la entrada de la \textbf{GDT} que apunte a la entrada de la \textbf{TSS} que creamos.

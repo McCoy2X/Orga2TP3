@@ -1,2 +1,56 @@
 \section{Ejercicio 5}
 
+Para la resolucion de este ejercicio modificamos \texttt{isr.asm} y \texttt{game.c}.
+
+\subsection{a}
+
+Estas entradas ya fueron inicializadas en el ejercicio 2.
+
+\subsection{b}
+
+\begin{lstlisting}
+	PUSHAD
+	CALL game_tick
+	POPAD
+	IRET
+\end{lstlisting}
+
+Luego, la funcion \texttt{game\_tick} fue modificada para llamar a \texttt{screen\_actualizar\_reloj\_global} tal como pide el enunciado.
+
+\subsection{c}
+
+\begin{lstlisting}
+	PUSHAD
+	CALL fin_intr_pic1
+	XOR eax, eax
+	IN al, 0x60
+	MOV ecx, 0x000F000F ; color
+	PUSH ecx
+	MOV ecx, 0          ; poscion
+	PUSH ecx
+	MOV ecx, 0          ; posicion
+	PUSH ecx
+	PUSH eax            ; codigo tecla
+	CALL print
+	ADD esp, 16
+	POPAD
+	IRET
+\end{lstlisting}
+
+\subsection{d}
+
+\begin{lstlisting}
+	PUSHAD
+	MOV eax, 0x42
+	POP edi              ; popeo todo menos eax
+	POP esi
+	POP ebp
+	ADD esp, 4
+	POP ebx
+	POP edx
+	POP ecx
+	ADD esp, 4
+	PUSH eax
+	POP eax
+	IRET
+\end{lstlisting}
