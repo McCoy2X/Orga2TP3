@@ -1,0 +1,50 @@
+
+ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+                                                                              M
+                                                                              M
+    MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M
+    M                                                                      M  M
+    M                                                                      M  M
+    M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M
+    M  M                                                                M  M  M
+    M  M                                                                M  M  M
+    M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M
+    M  M  M                                                          M  M  M  M
+    M  M  M                                                          M  M  M  M
+    M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M
+    M  M  M  M                                                    M  M  M  M  M
+    M  M  M  M                                                    M  M  M  M  M
+    M  M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M  M
+    M  M  M  M  M                                              M  M  M  M  M  M
+    M  M  M  M  M                                              M  M  M  M  M  M
+    M  M  M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M  M  M
+    M  M  M  M  M  M                                        M  M  M  M  M  M  M
+    M  M  M  M  M  M                                        M  M  M  M  M  M  M
+    M  M  M  M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M  M  M  M
+    M  M  M  M  M  M  M                                     M  M  M  M  M  M  M
+    M  M  M  M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M  M  M
+    M  M  M  M  M  M                                           M  M  M  M  M  M
+    M  M  M  M  M  M                                           M  M  M  M  M  M
+    M  M  M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M  M
+    M  M  M  M  M                                                 M  M  M  M  M
+    M  M  M  M  M                                                 M  M  M  M  M
+    M  M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M  M
+    M  M  M  M                                                       M  M  M  M
+    M  M  M  M                                                       M  M  M  M
+    M  M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M  M
+    M  M  M                                                             M  M  M
+    M  M  M                                                             M  M  M
+    M  M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M  M
+    M  M                                                                   M  M
+    M  M                                                                   M  M
+    M  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  M
+    M                                                                         M
+    M                                                                         M
+    MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+
+
+    1 2 3 4 5 6 7 8                                         1 2 3 4 5 6 7 8
+                                   000    000
+    X X X X X X X X                                         X X X X X X X X
+                                                                           (-) -

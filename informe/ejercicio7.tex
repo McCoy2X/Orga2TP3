@@ -1,6 +1,6 @@
 \section{Ejercicio 7}
 
-Para la resolucion de este ejercicio modificamos \texttt{sched.h}, \texttt{sched.c}, \texttt{game.h}, \texttt{game.c}, \texttt{screen.h}, \texttt{screen.c}, \texttt{isr.asm}
+Para la resolucion de este ejercicio modificamos \texttt{sched.h}, \texttt{sched.c}, \texttt{game.h}, \texttt{game.c}, \texttt{screen.h}, \texttt{screen.c} y \texttt{isr.asm}.
 
 \subsection{a}
 
@@ -8,7 +8,7 @@ Para el $scheduler$ tenemos una estructura de datos que contiene los siguientes 
 
 \begin{itemize}
 	\item Nro. de tarea ejecutandose
-	\item Proximo jugador (un caracter, puede ser \texttt{A} o \texttt{B}
+	\item Proximo jugador (un caracter, puede ser \texttt{A} o \texttt{B})
 	\item Modo $debug$ activado
 	\item Flag de excepcion (para el modo debug)
 	\item Excepcion atendida (para imprimir la excepcion una unica vez en el caso de estar en modo debug)
@@ -77,7 +77,7 @@ El mecanismo de cambio de tareas es relativamente sencillo, el trabajo principal
 		actualizar_relojes(tareaActual);
 		nuevoId = proximaTarea();
 		actualizar_jugador(proxJugador);
-		mineros_pendientes(proxJugador);
+		mineros_pendientes();
 		retun entradaGdt(nuevoId);
 	}
 \end{lstlisting}
@@ -90,7 +90,7 @@ Vamos a analizar la funcion por partes.
 	\item Toma el id de la nueva tarea a ejecutar, respetando la logica presentada en el punto \texttt{b} de este mismo ejercicio
 	\item Gran parte de la funcionalidad del $scheduler$ es hacer correctamente los cambios en las estructuras de datos pertinentes. Hacer esto implica cambiar el \texttt{proxJugador} y para el jugador que acaba de ejecutar su tarea, tengo que cambiar su \texttt{proxPirata}.
 	\item El criterio de cambio de jugador es simple, si el otro jugador no posee piratas en juego, no cambio de jugador.
-	\item Para cambiar el pirata del jugador que termino su ejecucion, alcanza con recorrer el arreglo de piratas del mismo en forma \"circular", es decir, si nos encontramos en el medio del mismo una vez que lleguemos al final, alcanza con volver al inicio y seguir recorriendo hasta que lleguemos a la posicion desde donde empezamos a recorrerlo. A medida que avanzamos, revisamos hasta encontrar el primer pirata en juego y lo seteamos como \texttt{proxPirata}, en el caso de que no encontremos otro, el \texttt{proxPirata} a ejecutar no cambiaria.
+	\item Para cambiar el pirata del jugador que termino su ejecucion, alcanza con recorrer el arreglo de piratas del mismo en forma circular, es decir, si nos encontramos en el medio del mismo una vez que lleguemos al final, alcanza con volver al inicio y seguir recorriendo hasta que lleguemos a la posicion desde donde empezamos a recorrerlo. A medida que avanzamos, revisamos hasta encontrar el primer pirata en juego y lo seteamos como \texttt{proxPirata}, en el caso de que no encontremos otro, el \texttt{proxPirata} a ejecutar no cambiaria.
 	\item En el caso de que se hubiera encontrado un tesoro, es necesario liberar un minero para juntar el botin, la funcion \texttt{mineros\_pendientes} se encarga de revisar si el jugador que acaba de ejecutar encontro algun tesoro. Esto lo hace revisando el arreglo de botines del jugador en busca de algun botin no atendido, en caso de encontrarlo y si llega a haber un slot libre en los piratas del jugador, libera al minero en el puerto del jugador y marca al tesoro como atendido, en el caso contrario espera hasta el proximo tick del jugador para repetir el proceso.
 	\item Por ultimo, se retorna el indice de la \textbf{GDT} de la proxima tarea a ejecutar
 \end{itemize}
@@ -101,7 +101,7 @@ Para cerrar con este punto, vamos a hablar de los handlers de reloj y de teclado
 	\item En el caso del reloj, el $handler$ se encarga de llamar a \texttt{sched\_tick}, luego compara el valor retornado por la funcion con el valor actual del Task Register, si estos no coinciden salta a la nueva tarea
 	\item La interrupcion de teclado se encarga de lanzar piratas y de activar el modo debug
 	\item Si se toca la tecla para lanzar un pirata de algun jugador, el $handler$ se encarga de revisar si este tiene algun slot libre, en caso de haberlo procede a ocuparlo con el nuevo pirata y llena la entrada de la \textbf{TSS} del slot libre con la informacion del nuevo pirata, el codigo del pirata es mapeado en la direccion del puerto del jugador y ademas se aumenta la cantidad de piratas del jugador en uno
-	\item Si se toca la tecla de debug, el $handler$ procede a revisar en que estado se encontaraba el flag \texttt{modoDebug}, en caso de estar seteado, revisa si el flag \texttt{huboExcepcion} estaba activado, en tal caso lo baja mantiendo el modo debug activo lo cual efectivamente reanuda la ejecucion de las tareas, si no estaba activado procede a bajar el flag de \texttt{modoDebug}, efectivamente saliendo de dicho modo. En caso de que \texttt{modoDebug} no hubiese estado seteado, procederia a activarlo, entrando entonces a ejecutar en modo debug.
+	\item Si se toca la tecla de debug, el $handler$ procede a revisar en que estado se encontaraba el flag \texttt{modoDebug}, en caso de estar seteado, revisa si el flag \texttt{huboExcepcion} estaba activado, en tal caso lo baja mantiendo el modo debug activo lo cual efectivamente reanuda la ejecucion de las tareas, si no estaba activado procede a bajar el flag de \texttt{modoDebug}, efectivamente saliendo de dicho modo. En caso de que \texttt{modoDebug} no hubiese estado seteado, procederia a activarlo, entrando entonces a ejecutar en modo debug
 \end{itemize}
 	
 \subsection{d}
